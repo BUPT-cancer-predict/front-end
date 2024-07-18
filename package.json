@@ -7,12 +7,16 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "element-plus": "^1.0.2-beta.28",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-router": "~5.0.0",
-    "@vue/cli-service": "~5.0.0"
+    "@vue/cli-service": "~5.0.0",
+    "axios": "^0.18.1",
+    "vue-cli-plugin-axios": "^0.0.4",
+    "vue-cli-plugin-element-plus": "^0.0.13"
   },
   "browserslist": [
     "> 1%",
