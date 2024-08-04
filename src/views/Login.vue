@@ -124,6 +124,7 @@
 
 <script>
 import axios from "axios";
+import { ElMessage } from "element-plus";
 export default {
   data() {
     return {
@@ -186,7 +187,7 @@ export default {
     // 登录
     async login() {
       try {
-        const response = await axios.post("/api/login", {
+        const response = await axios.post("http://localhost:9090/login", {
           username: this.username,
           password: this.password,
         });
@@ -196,7 +197,7 @@ export default {
           // 根据后端返回的数据进行处理，例如存储 token 到本地存储
           localStorage.setItem("token", response.data.token);
           // 跳转到其他页面
-          this.$router.push("/dashboard");
+          this.$router.push("/test");
         } else {
           alert("用户名或密码错误！");
         }
@@ -242,11 +243,17 @@ export default {
     registerUser() {
       // 使用axios发送POST请求到后端API
       axios
-        .post("/api/register", this.registerForm)
+        .post("http://localhost:9090/register", this.registerForm)
         .then((response) => {
           // 注册成功后的处理逻辑
-          console.log("User registered successfully:", response);
-          ElMessage.success("Registration successful");
+          if (response.data.success) {
+            // 注册成功
+            console.log("User registered successfully:", response);
+            ElMessage.success("Registration successful");
+          } else {
+            // 注册失败
+            ElMessage.error("Registration failed");
+          }
           // 清空表单
           this.$refs.registerFormRef.resetFields();
         })
@@ -264,9 +271,9 @@ export default {
     // 忘记密码-查询邮箱
     queryEmail() {
       axios
-        .get(`/api/user/email?account=${this.forgotForm.account}`)
+        .get(`http://localhost:9090/email?account=${this.forgotForm.account}`)
         .then((response) => {
-          this.forgotForm.email = response.data.email;
+          this.forgotForm.email = response.data[0].email;
         })
         .catch((error) => {
           console.error("Error querying email:", error);
@@ -277,9 +284,14 @@ export default {
     sendCaptcha() {
       // 发送验证码到邮箱
       axios
-        .post(`/api/send-captcha?email=${this.forgotForm.email}`)
-        .then(() => {
-          alert("Captcha sent successfully.");
+        .post(`http://localhost:9090/send-captcha`)
+        .then((response) => {
+          if (response.data.success) {
+            alert("Captcha sent successfully.");
+          }
+          if (!response.data.success) {
+            alert("Failed to send captcha. Please try again later.");
+          }
         })
         .catch((error) => {
           console.error("Error sending captcha:", error);
@@ -289,10 +301,15 @@ export default {
     // 忘记密码-重置密码
     resetPassword() {
       axios
-        .post(`/api/reset-password`, this.forgotForm)
+        .post(`http://localhost:9090/reset-password`, this.forgotForm)
         .then((response) => {
-          alert("Password reset successfully.");
-          this.closeForgotDrawer();
+          if (response.data.success) {
+            alert("Password reset successfully.");
+            this.closeForgotDrawer();
+          }
+          if (!response.data.success) {
+            alert("Failed to reset password. Please try again later.");
+          }
         })
         .catch((error) => {
           console.error("Error resetting password:", error);
