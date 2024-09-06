@@ -1,527 +1,504 @@
 <template>
   <div>
-    <div class="welcome-message">
-      <h1>Welcome User!</h1>
-    </div>
-    <div class="body">
-      <div class="login-container">
-        <div class="drop">
-          <div class="content">
-            <h2>Sign in</h2>
-            <form>
-              <div class="input-box">
-                <el-input v-model="username" placeholder="Username"></el-input>
-              </div>
-
-              <div class="input-box">
-                <el-input
-                  v-model="password"
-                  type="password"
-                  placeholder="Password"
-                  show-password
-                ></el-input>
-              </div>
-
-              <div class="input-box">
-                <input type="submit" value="Login" @click.prevent="login" />
-              </div>
-            </form>
+    <div class="introduce">
+      <video
+        src="../assets/video.mp4"
+        autoplay
+        muted
+        loop
+        class="background-video"
+      ></video>
+      <header class="header">
+        <div class="logo-container">
+          <img src="../assets/logo.png" alt="Logo" class="logo" />
+          <span class="logo-text">沐光健康平台</span>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="#" @click.prevent="showLoginPrompt">个人中心</a></li>
+            <li><a href="#" @click.prevent="showLoginPrompt">在线咨询</a></li>
+            <li><a href="#" @click.prevent="showLoginPrompt">病情交流</a></li>
+            <li><a href="#" @click.prevent="showLoginPrompt">常见问题</a></li>
+            <li><a href="#" @click.prevent="showLoginPrompt">关于我们</a></li>
+          </ul>
+        </nav>
+      </header>
+      <div class="time">
+        <div class="time-text">{{ currentTime }}</div>
+        <div class="time-greeting">{{ timeGreeting }}</div>
+      </div>
+      <div class="card-opt">
+        <el-button
+          @click="switchForm('quickLogin')"
+          plain
+          class="transparent-button"
+          :class="{
+            'selected-button': currentForm === 'quickLogin',
+            'unselected-button': currentForm !== 'quickLogin',
+          }"
+        >
+          快速登录
+        </el-button>
+        <el-button
+          @click="switchForm('dynamicPasswordLogin')"
+          plain
+          class="transparent-button"
+          :class="{
+            'selected-button': currentForm === 'dynamicPasswordLogin',
+            'unselected-button': currentForm !== 'dynamicPasswordLogin',
+          }"
+        >
+          动态密码登录
+        </el-button>
+      </div>
+      <div class="card">
+        <div v-if="currentForm === 'quickLogin'">
+          <!-- 快速登录表单内容 -->
+          <div class="input-group">
+            <el-input
+              placeholder="手机号"
+              v-model="phoneNumber"
+              prefix-icon="el-icon-phone"
+              style="width: 200px; margin-bottom: 10px"
+            ></el-input>
+            <el-input
+              type="password"
+              placeholder="请输入密码"
+              v-model="password"
+              prefix-icon="el-icon-lock"
+              show-password
+              style="width: 200px; margin-bottom: 10px"
+            ></el-input>
+          </div>
+          <div class="forget">
+            <a href="#" @click.prevent="showLoginPrompt" class="no-underline-f"
+              >忘记密码？</a
+            >
+          </div>
+          <div class="submit">
+            <el-button @click="login" plain> →登录 </el-button>
+          </div>
+          <div class="register">
+            <span class="account-text">还没有账号？</span>
+            <a href="#" @click.prevent="showLoginPrompt" class="no-underline-r"
+              >免费注册</a
+            >
+          </div>
+          <div class="text">
+            <input type="checkbox" id="agreeCheckbox" v-model="agree" />
+            <label for="agreeCheckbox"
+              >我已阅读并同意《用户协议》和《隐私政策》，并确保在使用时遵守相关的法律法规，保护个人信息</label
+            >
+          </div>
+          <div class="more">
+            <div class="line">
+              <span> ———更多登录方式——— </span>
+            </div>
+            <div class="circles">
+              <div class="circle red"></div>
+              <div class="circle green"></div>
+              <div class="circle blue"></div>
+            </div>
           </div>
         </div>
-        <a href="#" class="btns" @click.prevent="openForgotDrawer"
-          >Forget Password</a
-        >
-        <a href="#" class="btns signup" @click.prevent="openDrawer">Sign Up</a>
-        <!-- 注册抽屉 -->
-        <el-drawer
-          v-model="drawerVisible"
-          title="User Registration"
-          :direction="direction"
-          size="50%"
-        >
-          <el-form
-            ref="registerFormRef"
-            :model="registerForm"
-            :rules="registerRules"
-            label-width="100px"
-          >
-            <el-form-item label="Username" prop="username">
-              <el-input v-model="registerForm.username" />
-            </el-form-item>
-            <el-form-item label="Email" prop="email">
-              <el-input v-model="registerForm.email" />
-            </el-form-item>
-            <el-form-item label="Password" prop="password">
-              <el-input
-                v-model="registerForm.password"
-                type="password"
-                show-password
-              />
-            </el-form-item>
-            <el-form-item label="Confirm" prop="confirmPassword">
-              <el-input
-                v-model="registerForm.confirmPassword"
-                type="password"
-                show-password
-              />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="submitForm">Register</el-button>
-              <el-button @click="resetForm">Reset</el-button>
-            </el-form-item>
-          </el-form>
-        </el-drawer>
-
-        <!-- 忘记密码抽屉 -->
-        <el-drawer
-          v-model="forgotDrawerVisible"
-          title="Reset Password"
-          :direction="direction"
-          size="50%"
-        >
-          <el-form :model="forgotForm" label-width="100px">
-            <el-form-item label="Account">
-              <el-input
-                v-model="forgotForm.account"
-                placeholder="Enter your account"
-              />
-            </el-form-item>
-
-            <el-form-item label="Email">
-              <el-input v-model="forgotForm.email" disabled />
-              <el-button type="primary" @click="queryEmail">Query</el-button>
-            </el-form-item>
-
-            <el-form-item label="Captcha">
-              <el-input
-                v-model="forgotForm.captcha"
-                placeholder="Enter captcha"
-              />
-              <el-button type="primary" @click="sendCaptcha"
-                >Send Captcha</el-button
-              >
-            </el-form-item>
-
-            <el-form-item label="New">
-              <el-input
-                v-model="forgotForm.newPassword"
-                type="password"
-                placeholder="Enter new password"
-              />
-            </el-form-item>
-
-            <el-form-item>
-              <el-button type="primary" @click="resetPassword"
-                >Submit</el-button
-              >
-            </el-form-item>
-          </el-form>
-        </el-drawer>
+        <div v-if="currentForm === 'dynamicPasswordLogin'">
+          <!-- 动态密码登录表单内容 -->
+        </div>
       </div>
     </div>
+
+    <footer>
+      <p>&copy; 2024 BUPT. 版权所有</p>
+    </footer>
   </div>
 </template>
 
 <script>
+import Swal from "sweetalert2";
 import axios from "axios";
-import { ElMessage } from "element-plus";
+
 export default {
   data() {
     return {
-      username: "",
+      currentTime: "",
+      timeGreeting: "",
+      currentForm: "quickLogin", // 初始默认为快速登录表单
+      agree: false,
+      phoneNumber: "",
       password: "",
-      drawerVisible: false,
-      direction: "rtl",
-      registerForm: {
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      },
-      forgotDrawerVisible: false,
-      forgotForm: {
-        account: "",
-        email: "",
-        captcha: "",
-        newPassword: "",
-      },
-      registerRules: {
-        username: [
-          {
-            required: true,
-            message: "Please input your username",
-            trigger: "blur",
-          },
-        ],
-        email: [
-          {
-            required: true,
-            message: "Please input your email",
-            trigger: "blur",
-          },
-          {
-            type: "email",
-            message: "Please input a valid email",
-            trigger: ["blur", "change"],
-          },
-        ],
-        password: [
-          {
-            required: true,
-            message: "Please input your password",
-            trigger: "blur",
-          },
-        ],
-        confirmPassword: [
-          {
-            required: true,
-            message: "Please confirm your password",
-            trigger: "blur",
-          },
-          { validator: this.validatePassword, trigger: "blur" },
-        ],
-      },
     };
   },
+  mounted() {
+    this.updateTime();
+    this.startTimer();
+  },
   methods: {
-    // 登录
-    async login() {
-      try {
-        const response = await axios.post("http://localhost:9090/login", {
-          username: this.username,
-          password: this.password,
-        });
+    updateTime() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, "0");
+      this.currentTime = `${hours}:${minutes}`;
 
-        if (response.data.success) {
-          alert("登录成功！");
-          // 根据后端返回的数据进行处理，例如存储 token 到本地存储
-          localStorage.setItem("token", response.data.token);
-          // 跳转到其他页面
-          this.$router.push("/test");
-        } else {
-          alert("用户名或密码错误！");
-        }
-      } catch (error) {
-        console.error("登录失败:", error);
-        alert("登录过程中发生错误，请稍后再试。");
-      }
-    },
-
-    openDrawer() {
-      this.drawerVisible = true;
-    },
-
-    closeDrawer() {
-      this.drawerVisible = false;
-    },
-
-    // 表单验证
-    validatePassword(rule, value, callback) {
-      if (value !== this.registerForm.password) {
-        callback(new Error("The two passwords do not match"));
+      if (hours >= 5 && hours < 12) {
+        this.timeGreeting = "早上好，新的一天也要注意健康哦！";
+      } else if (hours >= 12 && hours < 18) {
+        this.timeGreeting = "下午好，记得不要错过午饭时间哦！";
+      } else if (hours >= 18 && hours < 22) {
+        this.timeGreeting = "晚上好，熬夜对身体的伤害是很大的！";
       } else {
-        callback();
+        this.timeGreeting = "夜深了，早点休息才是正确的选择哦！";
       }
     },
-
-    //// 注册
-    submitForm() {
-      this.$refs.registerFormRef.validate((valid) => {
-        if (valid) {
-          // 如果表单验证通过，调用注册接口
-          this.registerUser();
-        } else {
-          ElMessageBox.alert("Please correct the errors below.");
-        }
+    startTimer() {
+      setInterval(() => {
+        this.updateTime();
+      }, 1000);
+    },
+    showLoginPrompt() {
+      // 使用 SweetAlert2 显示美化后的提示框
+      Swal.fire({
+        title: "请先登录！",
+        html: '<span style="font-size: 18px;">请先登录您的账号才能继续操作。</span>',
+        icon: "warning",
+        confirmButtonText: "确定",
+        customClass: {
+          popup: "my-swal-popup",
+          title: "my-swal-title",
+          confirmButton: "my-swal-confirm",
+        },
+        width: "400px",
+        heightAuto: false,
       });
     },
-
-    resetForm() {
-      this.$refs.registerFormRef.resetFields();
+    switchForm(formType) {
+      this.currentForm = formType;
     },
+    login() {
+      // 检查用户名和密码是否为空以及单选框是否选择
+      if (!this.agree) {
+        Swal.fire({
+          title: "登录失败！",
+          html: '<span style="font-size: 18px;">请先阅读并同意用户协议和隐私政策！</span>',
+          icon: "error",
+          confirmButtonText: "确定",
+          customClass: {
+            popup: "my-swal-popup",
+            title: "my-swal-title",
+          },
+        });
+        return;
+      }
+      if (!this.username || !this.password) {
+        Swal.fire({
+          title: "登录失败！",
+          html: '<span style="font-size: 18px;">用户名和密码不能为空！</span>',
+          icon: "error",
+          confirmButtonText: "确定",
+          customClass: {
+            popup: "my-swal-popup",
+            title: "my-swal-title",
+            confirmButton: "my-swal-confirm",
+          },
+        });
+        return;
+      }
 
-    registerUser() {
-      // 使用axios发送POST请求到后端API
+      // 发送登录请求到后端接口
       axios
-        .post("http://localhost:9090/register", this.registerForm)
+        .post("/api/login", {
+          username: this.username,
+          password: this.password,
+        })
         .then((response) => {
-          // 注册成功后的处理逻辑
-          if (response.data.success) {
-            // 注册成功
-            console.log("User registered successfully:", response);
-            ElMessage.success("Registration successful");
-          } else {
-            // 注册失败
-            ElMessage.error("Registration failed");
-          }
-          // 清空表单
-          this.$refs.registerFormRef.resetFields();
+          // 登录成功处理
+          console.log("登录成功:", response.data);
+          Swal.fire({
+            title: "登录成功！",
+            html:
+              '<span style="font-size: 18px;">欢迎回来，' +
+              response.data.username +
+              "！</span>",
+            icon: "success",
+            confirmButtonText: "确定",
+            customClass: {
+              popup: "my-swal-popup",
+              title: "my-swal-title",
+              confirmButton: "my-swal-confirm",
+            },
+          }).then(() => {
+            // 登录成功后跳转到主页
+            this.$router.push("/home");
+          });
         })
         .catch((error) => {
-          // 注册失败后的处理逻辑
-          console.error("Failed to register user:", error);
-          ElMessage.error("Failed to register. Please check your inputs.");
+          // 登录失败处理
+          console.error("登录失败:", error);
+          // 错误提示
+          Swal.fire({
+            title: "登录失败！",
+            html: '<span style="font-size: 18px;">用户名或密码错误！</span>',
+            icon: "error",
+            confirmButtonText: "确定",
+            customClass: {
+              popup: "my-swal-popup",
+              title: "my-swal-title",
+              confirmButton: "my-swal-confirm",
+            },
+          });
         });
-    },
-
-    openForgotDrawer() {
-      this.forgotDrawerVisible = true;
-    },
-
-    // 忘记密码-查询邮箱
-    queryEmail() {
-      axios
-        .get(`http://localhost:9090/email?account=${this.forgotForm.account}`)
-        .then((response) => {
-          this.forgotForm.email = response.data[0].email;
-        })
-        .catch((error) => {
-          console.error("Error querying email:", error);
-        });
-    },
-
-    // 忘记密码-发送验证码
-    sendCaptcha() {
-      // 发送验证码到邮箱
-      axios
-        .post(`http://localhost:9090/send-captcha`)
-        .then((response) => {
-          if (response.data.success) {
-            alert("Captcha sent successfully.");
-          }
-          if (!response.data.success) {
-            alert("Failed to send captcha. Please try again later.");
-          }
-        })
-        .catch((error) => {
-          console.error("Error sending captcha:", error);
-        });
-    },
-
-    // 忘记密码-重置密码
-    resetPassword() {
-      axios
-        .post(`http://localhost:9090/reset-password`, this.forgotForm)
-        .then((response) => {
-          if (response.data.success) {
-            alert("Password reset successfully.");
-            this.closeForgotDrawer();
-          }
-          if (!response.data.success) {
-            alert("Failed to reset password. Please try again later.");
-          }
-        })
-        .catch((error) => {
-          console.error("Error resetting password:", error);
-        });
-    },
-
-    closeForgotDrawer() {
-      this.forgotDrawerVisible = false;
     },
   },
 };
 </script>
 
-<style>
-* {
+<style scoped>
+.introduce {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.421);
+  padding: 10px 20px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+}
+
+.logo-text {
+  margin-left: 5px;
+  font-size: 16px;
+  color: #333;
+}
+
+nav ul {
+  list-style-type: none;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
-.welcome-message {
-  position: absolute;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%); /* 水平居中 */
-  font-size: 1.2em;
-  color: #333;
-}
-.body {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: #eff0f4;
-}
-.login-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  left: -80px;
-}
-.login-container .drop {
-  position: relative;
-  width: 350px;
-  height: 350px;
-  box-shadow: inset 20px 20px 20px rgba(0, 0, 0, 0.05),
-    25px 35px 20px rgba(0, 0, 0, 0.05), 25px 30px 30px rgba(0, 0, 0, 0.05),
-    inset -20px -20px 25px rgba(255, 255, 255, 0.9);
-  transition: 0.5s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 52% 48% 33% 67% / 38% 45% 55% 62%;
-}
-.login-container .drop:hover {
-  border-radius: 50%;
-}
-.login-container .drop::before {
-  content: "";
-  position: absolute;
-  top: 50px;
-  left: 85px;
-  width: 35px;
-  height: 35px;
-  background: #fff;
-  border-radius: 50%;
-  opacity: 0.9;
-}
-.login-container .drop::after {
-  content: "";
-  position: absolute;
-  top: 90px;
-  left: 110px;
-  width: 15px;
-  height: 15px;
-  background: #fff;
-  border-radius: 50%;
-  opacity: 0.9;
-}
-.login-container .drop .content {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  text-align: center;
-  padding: 40px;
-  gap: 15px;
-}
-.login-container .drop .content h2 {
-  position: relative;
-  color: #333;
-  font-size: 1.5em;
-}
-.login-container .drop .content form {
-  display: flex;
-  justify-self: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 20px;
-}
-.login-container .drop .content form .input-box {
-  position: relative;
-  width: 225px;
-  box-shadow: inset 2px 5px 10px rgba(0, 0, 0, 0.1),
-    inset -2px -5px 10px rgba(255, 255, 255, 1),
-    15px 15px 10px rgba(0, 0, 0, 0.05), 15px 10px 15px rgba(0, 0, 0, 0.025);
-  border-radius: 25px;
 }
 
-.login-container .drop .content form .input-box::before {
-  content: "";
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 65%;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 5px;
+nav li {
+  margin-right: 20px;
 }
 
-.login-container .drop .content form .input-box input {
-  border: none;
-  outline: none;
-  background: transparent;
-  width: 100%;
-  font-size: 1em;
-  padding: 10px 15px;
-}
-
-.login-container .drop .content form .input-box input[type="submit"] {
-  color: #fff;
-  text-transform: uppercase;
-  font-size: 1em;
-  cursor: pointer;
-  letter-spacing: 0.1em;
-  font-weight: 500;
-}
-
-.login-container .drop .content form .input-box:last-child {
-  width: 120px;
-  background: #ff0f5b;
-  box-shadow: inset 2px 5px 10px rgba(0, 0, 0, 0.1),
-    15px 15px 10px rgba(0, 0, 0, 0.05), 15px 10px 15px rgba(0, 0, 0, 0.025);
-  transition: 0.5s;
-}
-
-.login-container .drop .content form .input-box:last-child:hover {
-  width: 150px;
-}
-
-.btns {
-  position: absolute;
-  right: -120px;
-  bottom: 0;
-  width: 120px;
-  height: 120px;
-  background: #c61dff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+nav a {
   text-decoration: none;
-  color: #fff;
-  line-height: 1.2em;
-  letter-spacing: 0.1em;
+  color: #333;
+}
+
+footer {
+  margin-top: 0px;
   font-size: 0.8em;
-  transition: 0.25s;
+  color: black;
   text-align: center;
-  box-shadow: inset 10px 10px 10px rgba(190, 1, 254, 0.05),
-    15px 25px 10px rgba(190, 1, 254, 0.1), 15px 20px 20px rgba(190, 1, 254, 0.1),
-    inset -10px -10px 15px rgba(255, 255, 255, 0.5);
-  border-radius: 44% 56% 65% 35% / 57% 58% 42% 43%;
 }
 
-.btns:hover {
-  border-radius: 50%;
-}
-
-.btns::before {
-  content: "";
+.time {
   position: absolute;
-  top: 15px;
-  left: 30px;
+  top: 30%;
+  left: 10%;
+  font-size: 18px;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+.time-text {
+  font-size: 46px;
+}
+.time-greeting {
+  font-size: 24px;
+}
+.card-opt {
+  position: absolute;
+  top: 23%;
+  right: 10%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 1;
+}
+
+.transparent-button {
+  border-radius: 50px; /* 圆角 */
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  color: white;
+  font-size: large;
+  font-weight: bold;
+  width: 170px;
+  height: 40px;
+}
+
+.card-opt .el-button {
+  --el-button-focus-border-color: transparent;
+  --el-button-hover-border-color: transparent;
+}
+
+.card-opt .el-button:focus,
+.card-opt .el-button:active {
+  outline: none;
+  box-shadow: none;
+  background-color: white;
+  color: black;
+}
+
+.selected-button {
+  background-color: white;
+  color: black;
+}
+
+.unselected-button {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: rgba(0, 0, 0, 0.6);
+  border-color: transparent;
+}
+
+.card {
+  position: absolute;
+  top: 55%;
+  right: 10%;
+  transform: translateY(-50%);
+  width: 25%;
+  height: auto;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.el-input {
+  width: 220px;
+  margin-bottom: 10px;
+}
+.forget {
+  margin-bottom: 10px;
+  text-align: right;
+  font-size: 14px;
+  color: white;
+  padding-right: 70px;
+}
+
+.no-underline-f {
+  text-decoration: none;
+  color: inherit;
+}
+
+.submit {
+  display: flex;
+  justify-content: center;
+}
+.submit .el-button {
+  border-radius: 50px; /* 圆角 */
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid #ff6347;
+  color: white;
+  width: 220px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.register {
+  padding-left: 70px;
+  margin-top: 10px;
+}
+.account-text {
+  color: rgba(0, 0, 0, 0.5); /* 半透明黑色 */
+}
+.no-underline-r {
+  text-decoration: none;
+  color: inherit;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+}
+.text {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  padding-left: 70px;
+  padding-right: 70px;
+}
+
+.text input[type="checkbox"] {
+  margin-right: 5px;
+  align-self: flex-start;
+}
+
+.text label {
+  font-size: 14px;
+  color: #333;
+  white-space: pre-wrap;
+}
+
+.more {
+  font-size: small;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+.line {
+  text-align: center;
+}
+
+.circles {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.circle {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #fff;
-  opacity: 0.45;
 }
 
-.btns.signup {
-  width: 80px;
-  height: 80px;
-  bottom: 150px;
-  right: -120px;
-  box-shadow: inset 10px 10px 10px rgba(1, 180, 255, 0.05),
-    15px 25px 10px rgba(1, 180, 255, 0.1), 15px 20px 20px rgba(1, 180, 255, 0.1),
-    inset -10px -10px 15px rgba(255, 255, 255, 0.5);
-  border-radius: 49% 51% 52% 48% / 63% 59% 41% 37%;
-  background: #01b4ff;
+.red {
+  background-color: red;
 }
 
-.btns.btns.signup::before {
-  left: 20px;
-  width: 15px;
-  height: 15px;
+.green {
+  background-color: green;
 }
 
-.btns:hover {
-  border-radius: 50%;
+.blue {
+  background-color: blue;
 }
 </style>
