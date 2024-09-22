@@ -44,12 +44,15 @@
         :key="index"
       >
         <a :href="item.url" target="_blank">
-          <img :src="item.image" alt="News Image" class="card-image" />
-          <div class="card-content">
+          <div class="imgSpace">
+            <img :src="item.image" alt="News Image" class="card-image" />
+          </div>
+          <div class="card-content" id="cc1">
             <h3 class="card-title">{{ item.title }}</h3>
           </div>
         </a>
       </div>
+
       <div class="large-card">
         <div class="left-content">
           <a :href="largeNewsFirstRow.url" target="_blank">
@@ -92,7 +95,10 @@
         :key="index"
       >
         <a :href="item.url" target="_blank">
-          <img :src="item.image" alt="News Image" class="card-image" />
+          <div class="imgSpace">
+            <img :src="item.image" alt="News Image" class="card-image" />
+          </div>
+
           <div class="card-content">
             <h3 class="card-title">{{ item.title }}</h3>
           </div>
@@ -115,38 +121,38 @@ export default {
     return {
       smallNewsFirstRow: [
         {
-          title: "新闻标题1",
-          image: require("@/assets/test.png"), // 使用require确保路径正确
-          url: "https://www.baidu.com",
+          title: "21种癌症表现......",
+          image: require("../assets/newstitle1.jpg"), // 使用require确保路径正确
+          url: "https://www.toutiao.com/article/7099316532420805133/?channel=&source=search_tab",
         },
         {
-          title: "新闻标题2",
-          image: require("@/assets/test.png"), // 使用require确保路径正确
-          url: "https://www.example.com",
+          title: "癌症治疗仪器重大突破！",
+          image: require("../assets/title2.jpg"), // 使用require确保路径正确
+          url: "https://www.toutiao.com/article/7409207215829156390/?channel=&source=search_tab",
         },
       ],
       largeNewsFirstRow: {
-        title: "大新闻标题1",
-        image: require("@/assets/test.png"), // 使用require确保路径正确
-        summary: "这是一段新闻摘要，用于展示更多的信息。",
-        url: "https://www.google.com",
+        title: "什么是癌症？",
+        image: require("@/assets/title3.jpg"), // 使用require确保路径正确
+        summary: "全国肿瘤防治安全周:关于癌症，你了解多少？",
+        url: "https://www.toutiao.com/article/6680716292971823628/?channel=&source=search_tab",
       },
       largeNewsSecondRow: {
-        title: "大新闻标题2",
-        image: require("@/assets/test.png"), // 使用require确保路径正确
-        summary: "这是另一段新闻摘要，用于展示更多的信息。",
-        url: "https://www.example.org",
+        title: "小分子疗法3期临床",
+        image: require("@/assets/title4.jpg"), // 使用require确保路径正确
+        summary: "70%癌症患者获得缓解，突破性小分子疗法挺进3期临床",
+        url: "https://www.toutiao.com/article/7408715920626942504/?channel=&source=search_tab",
       },
       smallNewsSecondRow: [
         {
-          title: "新闻标题3",
-          image: require("@/assets/test.png"), // 使用require确保路径正确
-          url: "https://www.example.net",
+          title: "打针杀死癌细胞！疗法再突破",
+          image: require("@/assets/title5.png"), // 使用require确保路径正确
+          url: "https://www.toutiao.com/article/7017011972915020324/",
         },
         {
-          title: "新闻标题4",
-          image: require("@/assets/test.png"), // 使用require确保路径正确
-          url: "https://www.example.info",
+          title: "普通人也能承受费用的新型疗法！",
+          image: require("@/assets/title6.jpg"), // 使用require确保路径正确
+          url: "https://www.toutiao.com/article/7212829647241986600/?channel=&source=search_tab",
         },
       ],
     };
@@ -260,6 +266,10 @@ nav a {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  margin-top: 10px;
+
+  margin-left: 100px;
+  margin-right: 100px;
 }
 
 .row {
@@ -268,20 +278,28 @@ nav a {
 }
 
 .small-card {
+  background-image: url("../assets/th.jpg");
   background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  border-radius: 10px;
+  width: 350px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 95% 95%;
+  box-shadow: 0 8px 8px #a4a4a4;
+  padding: 17px;
+  border-radius: 5px;
   overflow: hidden;
   position: relative;
   height: 200px;
   text-decoration: none; /* 移除默认链接样式 */
   color: inherit; /* 继承父元素颜色 */
+  border: 1px solid #dfdfdf;
 }
 
 .card-image {
   width: 100%;
-  height: auto;
+  height: 100%;
+  min-width: 150px;
+  border-radius: 5px;
 }
 
 .card-content {
@@ -289,11 +307,20 @@ nav a {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
-  color: white;
+  /* background-color: rgba(0, 0, 0, 0.5); 半透明背景 */
+  color: #551a8b;
   padding: 10px;
-}
+  text-align: center;
 
+  height: 50px;
+}
+#cc1 {
+  color: white;
+}
+.imgSpace {
+  width: 100%;
+  height: 100%;
+}
 .card-title {
   font-size: 1.2em;
   margin-bottom: 10px;
@@ -306,30 +333,43 @@ nav a {
 
 .large-card {
   background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  border-radius: 10px;
+  background-image: url("../assets/th.jpg");
+  background-position: center;
+  background-size: 98% 95%;
+  background-repeat: no-repeat;
+  box-shadow: 0 4px 8px #a4a4a4;
+  padding: 10px;
+  border-radius: 5px;
   overflow: hidden;
   height: 200px;
   text-decoration: none; /* 移除默认链接样式 */
   color: inherit; /* 继承父元素颜色 */
   display: flex;
+  border: 1px solid #c6c6c6;
 }
 
 .left-content {
   flex: 1;
   padding: 20px;
 }
-
+a {
+  text-decoration: none;
+}
 .right-content {
   flex: 1;
-  padding: 20px;
+  padding: 10px;
+
+  border-radius: 5px;
+
+  padding-left: 75px;
 }
 
 .large-card-image {
   flex: 1;
   width: 100%;
-  height: auto;
+  height: 100%;
+  min-width: 200px;
+  border-radius: 5px;
 }
 
 /* 第一行布局 */
@@ -369,5 +409,10 @@ footer {
   font-size: 0.8em;
   color: black;
   text-align: center;
+}
+.imgSpace {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 </style>

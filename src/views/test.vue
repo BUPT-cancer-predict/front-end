@@ -1,183 +1,451 @@
 <template>
-  <div class="all">
+  <div class="main">
+    <!-- 标题区域 -->
     <pagehead></pagehead>
-    <!-- 卡片组件 -->
-    <div id="content">
-      <el-card class="system-intro">
-        <h2 class="card-title">XX系统为您保驾护航 专注于您的身体健康</h2>
-        <p class="card-desc">
-          这是一个用于病情预测的系统。通过分析患者的病历数据，可以预测患者未来的健康状况，帮助医生做出更准确的诊断。
-        </p>
-      </el-card>
-    </div>
+    <!-- 头部区域 -->
+    <!-- <div class="head">
+      <img src="@/assets/logo.png" alt="logo" class="logo" />
+      <div class="headline"><h1>预测系统</h1></div>
+    </div> -->
+    <div class="big">
+      <!-- 身体区域 -->
+      <div class="container">
+        <!-- 表单区域 -->
+        <table width="1000px">
+          <th>预测表单</th>
+          <tr>
+            <td>确诊年龄</td>
+            <td><input type="text" v-model="age" /></td>
+          </tr>
+          <tr>
+            <td>是否有恶性肿瘤家族史,有为1，没有为0:</td>
+            <td>
+              <input
+                type="radio"
+                name="family"
+                id="family1"
+                value="1"
+                v-model="familyHistory"
+              />
+              <label for="family1">1</label>
+              <input
+                type="radio"
+                value="0"
+                name="family"
+                id="family0"
+                v-model="familyHistory"
+              />
+              <label for="family0">0</label>
+            </td>
+          </tr>
 
-    <!-- 医疗动态 -->
-    <div id="news">
-      <!-- 走马灯 -->
-      <el-carousel height="600px">
-        <el-carousel-item v-for="(item, index) in newsImages" :key="index">
-          <img :src="item" alt="News Image" style="width: 100%; height: 100%" />
-        </el-carousel-item>
-      </el-carousel>
+          <tr>
+            <td>BMI(身体质量指数):</td>
+            <td>
+              <input type="text" value="体重（kg）/身高²（m）" v-model="bmi" />
+            </td>
+          </tr>
 
-      <!-- 新闻卡片 -->
-      <div class="news-cards">
-        <el-row :gutter="20">
-          <el-col
-            :span="12"
-            v-for="(newsItem, index) in newsItems"
-            :key="index"
-          >
-            <el-card shadow="hover" @click="handleNewsClick(newsItem.url)">
-              <div vslot="header" class="clearfix">
-                <span>{{ newsItem.title }}</span>
-              </div>
-              <div>{{ newsItem.description }}</div>
-            </el-card>
-          </el-col>
-        </el-row>
+          <tr>
+            <td>怀孕史:</td>
+            <td>
+              <input
+                type="text"
+                value="患者怀孕次数"
+                v-model="pregnancyHistory"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>产史:</td>
+            <td>
+              <input
+                type=" text"
+                value="患者分娩次数"
+                v-model="deliveryHistory"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>CA125,大于35为1，反之为0:</td>
+            <td>
+              <input
+                type="radio"
+                name="125"
+                id="1251"
+                value="1"
+                v-model="ca125"
+              />
+              <label for="1251">1</label>
+              <input
+                type="radio"
+                name="125"
+                id="1250"
+                value="0"
+                v-model="ca125"
+              />
+              <label for="1250">0</label>
+            </td>
+          </tr>
+          <tr>
+            <td>CA199,大于40为1，反之为0</td>
+            <td>
+              <input
+                type="radio"
+                name="199"
+                id="1991"
+                value="1"
+                v-model="ca199"
+              />
+              <label for="1991">1</label>
+              <input
+                type="radio"
+                name="199"
+                id="1990"
+                value="0"
+                v-model="ca199"
+              />
+              <label for="1990">0</label>
+            </td>
+          </tr>
+          <tr>
+            <td>病理类型编号:</td>
+            <td><input type="text" v-model="cancerSort" /></td>
+          </tr>
+
+          <tr>
+            <td>微乳头(是否存在微乳头结构，无为0，有为1):</td>
+
+            <td>
+              <input
+                type="radio"
+                name="weirutou"
+                id="weirutou1"
+                value="1"
+                v-model="weirutou"
+              /><label for="weirutou1">1</label>
+              <input
+                type="radio"
+                name="weirutou"
+                id="weirutou0"
+                value="0"
+                v-model="weirutou"
+              /><label for="weirutou0">0</label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              高危病理特征:（是否存在高危病理特征，无为0，有为1,若有则标明具体特征，无则不用填）:
+            </td>
+            <td>
+              <input
+                type="radio"
+                name="highrisk"
+                id="highrisk0"
+                value="0"
+                v-model="highRisk"
+              /><label for="highrisk0">0</label>
+              <input
+                type="radio"
+                name="highrisk"
+                id="highrisk1"
+                value="1"
+                v-model="highRisk"
+              /><label for="highrisk1">1</label><br />具体类型:
+              <input type="text" v-model="sort" />
+            </td>
+          </tr>
+          <tr>
+            <td>术中是否见囊肿破裂（有为1，没有为0）</td>
+            <td>
+              <input
+                type="radio"
+                name="nangzhong"
+                id="nangzhong1"
+                value="1"
+                v-model="swellBreak"
+              /><label for="nangzhong1">1</label>
+              <input
+                type="radio"
+                name="nanhzhong"
+                id="nangzhong0"
+                value="0"
+                v-model="swellBreak"
+              /><label for="nangzhong0">0</label>
+            </td>
+          </tr>
+          <tr>
+            <td>分期（根据FIGO分期标准选择相应的分期编号）:</td>
+            <td><input type="text" /></td>
+          </tr>
+
+          <tr>
+            <td>手术方式（手术是开腹还是腹腔镜，开腹为0，腹腔镜为1）:</td>
+            <td>
+              <input
+                type="radio"
+                name="method"
+                id="method1"
+                value="1"
+                v-model="surgeryMethod"
+              /><label for="method1">1</label>
+              <input type="radio" name="method" id="method0" value="0" /><label
+                for="method0"
+                >0</label
+              >
+            </td>
+          </tr>
+
+          <tr>
+            <td>手术范围（手术的具体范围，具体编号对应不同的手术）:</td>
+            <td><input type="text" v-model="surgeryRange" /></td>
+          </tr>
+
+          <tr>
+            <td>双侧交界（是否为双侧交界性肿瘤，单侧为1，双侧为2）:</td>
+            <td>
+              <input
+                type="radio"
+                name="shuangce"
+                id="shuangce1"
+                value="1"
+                v-model="bilateralBorder"
+              /><label for="shuangce1">1</label>
+              <input
+                type="radio"
+                name="shuangce"
+                id="shuangce2"
+                value="2"
+                v-model="bilateralBorder"
+              /><label for="shuangce2">2</label><br />
+            </td>
+          </tr>
+
+          <tr>
+            <td>最大径大小（肿瘤的最大径长度，不详时请输入0）：</td>
+            <td><input type="text" v-model="maximum" /></td>
+          </tr>
+        </table>
+        <!-- 按钮区域 -->
+        <button :plain="true" @click="showOut" text-align="center">预测</button>
+        <button @click="reset" style="margin-left: 20px">重新预测</button>
       </div>
+    </div>
+    <!-- 下面是各项结果，是我用来测试是不是保存到数据里的，这些数据现在暂时应该没有用 -->
+    <!-- <div v-if="showFlag" class="output">
+      
+    {{ age }}
+    {{  familyHistory}}
+    {{ bmi }}
+    {{ pregnancyHistory }}
+    {{ deliveryHistory }}
+    {{ ca125 }}
+    {{ ca199 }}
+    {{ cancerSort }}
+    {{ sort }}
+{{ weirutou }}
+{{ highRisk }}
+{{ cancerCharacter }}
+{{ swellBreak }}
+{{ fenqi }}
+{{ surgeryMethod }}
+{{ surgeryRange }}
+{{ bilateralBorder }}
+{{ maximum }}
+
+
+  </div> -->
+    <div class="feedback">
+      <!-- 结果预测表 -->
+      <el-descriptions
+        class="margin-top"
+        title="预测结果表"
+        :column="3"
+        :size="size"
+        border
+        direction="vertical"
+      >
+        <el-descriptions-item>
+          <template #label>
+            <div class="cell-item">复发概率值</div>
+          </template>
+          <div v-if="showFlag">0%</div>
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template #label>
+            <div class="cell-item">风险等级划分</div>
+          </template>
+          <div v-if="showFlag">低风险</div>
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template #label>
+            <div class="cell-item">相关建议</div>
+          </template>
+          <div v-if="showFlag">好好休息</div>
+        </el-descriptions-item>
+      </el-descriptions>
     </div>
     <pagefooter></pagefooter>
   </div>
 </template>
-
 <script>
-import _PageHeader from "element-plus/lib/el-page-header";
-
+import { ElMessage } from "element-plus";
 export default {
   data() {
     return {
-      activeIndex: "1",
-      activeIndex2: "1",
-      newsImages: [
-        "http://dingyue.nosdn.127.net/OKeFJklDlYKTib3tK9CnUn46Z7iKAcSBMNYj38sho55hL1513151118761.jpeg",
-        "https://ts1.cn.mm.bing.net/th/id/R-C.80ac1965bf38dd31068b1f96bb77d471?rik=sTY7H2oF%2b%2b8fhw&riu=http%3a%2f%2fpic.616pic.com%2fys_bnew_img%2f00%2f21%2f07%2feicTguByVx.jpg&ehk=5tWHfRxk4FUJayqGcHdQ63mHjbBrslYp3CI9bUutXJM%3d&risl=&pid=ImgRaw&r=0",
-        "https://n.sinaimg.cn/spider202034/383/w1080h903/20200304/7820-iqfqmau1499737.jpg",
-      ],
-      newsItems: [
-        {
-          title: "在中国年轻人中，与肥胖相关的癌症发病率急剧上升",
-          description:
-            "8月23日，发表在细胞出版社（Cell Press）旗下期刊Med上的一项综合研究显示，2007年至2021年间，中国与肥胖相关的癌症发病率以惊人的速度每年增长3.6%......",
-          url: "https://new.qq.com/rain/a/20240821A02CT100",
-        },
-        {
-          title: "数说｜最新癌症统计报告发布：肺癌再次成为全球第一大癌",
-          description:
-            "本周是中国第 30 个全国肿瘤防治宣传周。世界卫生组织下属的国际癌症研究机构（IARC）的 Freddie Bray 领衔的团队，近期也在医学领域影响因子排名第一的期刊《临床医师癌症杂志》上，发布了最新的癌症报告",
-          url: "https://www.thepaper.cn/newsDetail_forward_26966880",
-        },
-        {
-          title: "国家癌症中心刚刚发布：2024年全国癌症报告",
-          description:
-            "本次发布的结果为国家癌症中心与国际肿瘤研究机构（IARC）联合测算，与IARC发布的GLOBOCAN 2022的中国数据保持一致且同步发布。中国肿瘤登记数据质量和规范程度进一步提高，获得国内外一致认可，更新的恶性肿瘤负担数据能够为肿瘤防控和国家健康战略实施提供更客观的基础数据。",
-          url: "https://www.thepaper.cn/newsDetail_forward_28031161",
-        },
-      ],
+      showFlag: false,
+      age: "",
+      familyHistory: "",
+      bmi: "",
+      pregnancyHistory: "",
+      deliveryHistory: "",
+      ca125: "",
+      ca199: "",
+      cancerSort: "",
+      sort: "",
+      weirutou: "",
+      highRisk: "",
+      cancerCharacter: "",
+      swellBreak: "",
+      fenqi: "",
+      surgeryMethod: "",
+      surgeryRange: "",
+      bilateralBorder: "",
+      maximum: "",
     };
   },
   methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
+    showOut() {
+      this.showFlag = true;
+      ElMessage("预测完成");
     },
-    handleNewsClick(url) {
-      window.open(url, "_blank");
+
+    reset() {
+      this.showFlag = false;
+      this.age = "";
+      this.familyHistory = "";
+      this.bmi = "";
+      this.pregnancyHistory = "";
+      (this.deliveryHistory = ""), (this.ca125 = "");
+      this.ca199 = "";
+      this.cancerSort = "";
+      this.sort = "";
+      this.weirutou = "";
+      this.highRisk = "";
+      this.cancerCharacter = "";
+      this.swellBreak = "";
+      this.fenqi = "";
+      this.surgeryMethod = "";
+      this.surgeryRange = "";
+      this.bilateralBorder = "";
+      this.maximum = "";
+      ElMessage("已重置");
     },
   },
 };
 </script>
+<style>
+/* 容器样式，增加一些内边距和最大宽度 */
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 10px auto; /* 居中显示 */
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+}
 
-<style scoped>
-/* 顶部 Logo 图片 */
+/* 表格样式 */
+table {
+  width: 100%; /* 宽度调整为100%，以适应不同屏幕 */
+  /* border-collapse: collapse; 边框合并   */
+  margin-bottom: 20px; /* 表格底部间距 */
+}
+
+/* 表格标题和单元格样式 */
+th,
+td {
+  padding: 8px; /* 单元格内边距 */
+  text-align: left; /* 文本左对齐 */
+  border-bottom: 1px solid #ddd; /* 底部边框 */
+}
+
+/* 表格标题样式（如果需要的话） */
+th {
+  background-color: #fff; /* 背景色 */
+  font-weight: bold; /* 字体加粗 */
+}
+
+/* 输入框和单选按钮样式 */
+input[type="text"],
+input[type="radio"] + label {
+  margin-right: 10px; /* 输入框和标签之间的间距 */
+}
+
+/* 按钮样式 */
+el-button,
+button {
+  padding: 10px 20px; /* 内边距 */
+  margin-top: 20px; /* 顶部间距 */
+  background-color: #007bff; /* 背景色 */
+  color: white; /* 字体颜色 */
+  border: none; /* 去除边框 */
+  border-radius: 5px; /* 边框圆角 */
+  cursor: pointer; /* 鼠标悬停时显示手指形状 */
+  font-size: 16px; /* 字体大小 */
+  margin-left: 800px;
+}
+
+/* 预测结果显示样式 */
+div[v-if="showFlag"] {
+  background-color: #f8f9fa; /* 背景色 */
+  padding: 20px; /* 内边距 */
+  border: 1px solid #ddd; /* 边框 */
+  border-radius: 5px; /* 边框圆角 */
+  margin-top: 20px; /* 顶部间距 */
+}
+
+/* 预测结果中的文本样式 */
+div[v-if="showFlag"] p {
+  margin: 0; /* 去除默认的外边距 */
+  font-size: 16px; /* 字体大小 */
+}
+.output {
+  text-align: center;
+}
+.head {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 75px;
+  text-align: center;
+  background-color: #007bff;
+  border-radius: 5px;
+  margin: 0 auto;
+}
 .logo {
+  margin-left: 20px;
   width: 50px;
   height: 50px;
 }
-
-/* 卡片样式 */
-.system-intro {
-  padding: 20px;
-  font-family: "Arial", sans-serif;
-  background-color: #007bff;
-}
-
-.card-title {
-  color: white;
-  font-size: 50px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  line-height: 1.8;
+.headline {
   text-align: center;
-}
-
-.card-desc {
-  color: white;
-  font-size: 30px;
-  line-height: 1.6;
-  text-align: center;
-}
-
-#news {
-  margin-top: 5px;
-}
-
-.news-cards {
-  margin-top: 20px;
-}
-
-.el-card {
-  cursor: pointer;
-}
-
-.el-card:hover {
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-}
-
-.page-footer {
-  margin-top: 20px;
-}
-
-.new-source-container {
-  max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
-  text-align: center;
-}
-
-.links {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.link-item {
-  text-decoration: none;
-  color: #007bff;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-.link-item:hover {
-  background-color: #0056b3;
   color: white;
 }
-/* #0056b3 */
-footer {
-  margin-top: 0px;
-  font-size: 0.8em;
-  color: black;
+.bottom {
+  /* display:flex;
+  align-items: center; */
   text-align: center;
+  border-top: 1px solid #dddddd;
 }
+.try {
+  border: 2px solid;
+}
+.feedback {
+  border: 1px solid #dddddd;
 
-.all {
-  background-color: #f5f5f5;
-}
-.clearfix {
-  font-size: 20px;
-  font-weight: bold;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 20px auto;
 }
 </style>
