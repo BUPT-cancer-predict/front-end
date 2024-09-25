@@ -17,11 +17,31 @@
         </div>
         <nav>
           <ul>
-            <li><a href="#" @click.prevent="showLoginPrompt">个人中心</a></li>
-            <li><a href="#" @click.prevent="showLoginPrompt">在线咨询</a></li>
-            <li><a href="#" @click.prevent="showLoginPrompt">病情交流</a></li>
-            <li><a href="#" @click.prevent="showLoginPrompt">常见问题</a></li>
-            <li><a href="#" @click.prevent="showLoginPrompt">关于我们</a></li>
+            <li>
+              <router-link to="/#" @click="showLoginPrompt"
+                >个人中心</router-link
+              >
+            </li>
+            <li>
+              <router-link to="/#" @click="showLoginPrompt"
+                >在线咨询</router-link
+              >
+            </li>
+            <li>
+              <router-link to="/#" @click="showLoginPrompt"
+                >病情交流</router-link
+              >
+            </li>
+            <li>
+              <router-link to="/faq" @click="showLoginPrompt"
+                >常见问题</router-link
+              >
+            </li>
+            <li>
+              <router-link to="/about-us" @click="showLoginPrompt"
+                >关于我们</router-link
+              >
+            </li>
           </ul>
         </nav>
       </header>
@@ -671,8 +691,10 @@ export default {
 
 .logo-text {
   margin-left: 5px;
-  font-size: 16px;
-  color: #333;
+  font-family: "隶书", sans-serif;
+  font-size: 30px;
+  letter-spacing: 2px;
+  color: #fff;
 }
 
 nav ul {
@@ -683,12 +705,14 @@ nav ul {
 }
 
 nav li {
+  display: inline-block;
   margin-right: 20px;
 }
 
 nav a {
   text-decoration: none;
-  color: #333;
+  font-size: 18px;
+  color: #fff;
 }
 
 footer {
@@ -700,16 +724,16 @@ footer {
 
 .time {
   position: absolute;
-  top: 30%;
+  top: 25%;
   left: 10%;
-  font-size: 18px;
+  font-size: 80px;
   color: white;
   padding: 10px;
   border-radius: 5px;
   text-align: center;
 }
 .time-text {
-  font-size: 46px;
+  font-size: 64px;
 }
 .time-greeting {
   font-size: 24px;

@@ -2,6 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Predict from '../views/Predict.vue'
 import Home from '../views/Home.vue'
+import Personal from '../views/Personal.vue'
+import Consultation from '../views/Consultation.vue'
+import Exchange from '../views/Exchange.vue'
+import Faq from '../views/Faq.vue'
+import About from '../views/About.vue'
+import Ai from '../views/Ai.vue'
 
 const routes = [
   {
@@ -18,6 +24,36 @@ const routes = [
     path: '/home',
     name: 'home',
     component: Home
+  },
+  {
+    path: '/personal-center',
+    name: 'personal',
+    component: Personal
+  },
+  {
+    path: '/online-consultation',
+    name: 'consultation',
+    component: Consultation
+  },
+  {
+    path: '/diaease-exchange',
+    name: 'exchange',
+    component: Exchange
+  },
+  {
+    path: '/faq',
+    name: 'faq',
+    component: Faq
+  },
+  {
+    path: '/about-us',
+    name: 'about',
+    component: About
+  },
+  {
+    path: '/ai',
+    name: 'ai',
+    component: Ai
   }
 ]
 

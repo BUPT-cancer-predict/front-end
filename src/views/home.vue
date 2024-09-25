@@ -14,11 +14,21 @@
       </div>
       <nav>
         <ul>
-          <li><a href="#">个人中心</a></li>
-          <li><a href="#">在线咨询</a></li>
-          <li><a href="#">病情交流</a></li>
-          <li><a href="#">常见问题</a></li>
-          <li><a href="#">关于我们</a></li>
+          <li>
+            <router-link to="/personal-center">个人中心</router-link>
+          </li>
+          <li>
+            <router-link to="/online-consultation">在线咨询</router-link>
+          </li>
+          <li>
+            <router-link to="/disease-exchange">病情交流</router-link>
+          </li>
+          <li>
+            <router-link to="/faq">常见问题</router-link>
+          </li>
+          <li>
+            <router-link to="/about-us">关于我们</router-link>
+          </li>
         </ul>
       </nav>
     </header>
@@ -27,12 +37,12 @@
       <div class="overlay-text-predict">
         先进的机器学习模型<br />
         为您快速检测复发风险<br />
-        <el-button plain>→立即体验</el-button>
+        <el-button plain @click="goToPredict">→立即体验</el-button>
       </div>
       <div class="overlay-text-ai">
         最新的智慧大模型<br />
         为您排忧解难<br />
-        <el-button plain>→立即体验</el-button>
+        <el-button plain @click="goToAI">→立即体验</el-button>
       </div>
     </div>
   </div>
@@ -106,7 +116,9 @@
       </div>
     </div>
     <div class="more">
-      <el-button type="primary" plain>更多咨询</el-button>
+      <el-button type="primary" plain @click="goToConsultation"
+        >更多咨询</el-button
+      >
     </div>
   </div>
   <footer>
@@ -150,12 +162,23 @@ export default {
           url: "https://www.toutiao.com/article/7017011972915020324/",
         },
         {
-          title: "普通人也能承受费用的新型疗法！",
+          title: "普通人也能承受的新型疗法！",
           image: require("@/assets/title6.jpg"), // 使用require确保路径正确
           url: "https://www.toutiao.com/article/7212829647241986600/?channel=&source=search_tab",
         },
       ],
     };
+  },
+  methods: {
+    goToConsultation() {
+      this.$router.push("/consultation");
+    },
+    goToPredict() {
+      this.$router.push("/predict");
+    },
+    goToAI() {
+      this.$router.push("/ai");
+    },
   },
 };
 </script>
@@ -198,8 +221,10 @@ export default {
 
 .logo-text {
   margin-left: 5px;
-  font-size: 16px;
-  color: #333;
+  font-family: "隶书", sans-serif;
+  font-size: 30px;
+  letter-spacing: 2px;
+  color: #fff;
 }
 
 nav ul {
@@ -210,12 +235,14 @@ nav ul {
 }
 
 nav li {
+  display: inline-block;
   margin-right: 20px;
 }
 
 nav a {
   text-decoration: none;
-  color: #333;
+  font-size: 18px;
+  color: #fff;
 }
 
 .overlay-text {
@@ -224,7 +251,8 @@ nav a {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1;
-  font-size: 30px;
+  font-size: 50px;
+  letter-spacing: 4px;
   color: #fff;
   font-weight: bold;
 }
@@ -243,12 +271,16 @@ nav a {
 .overlay-text-predict,
 .overlay-text-ai {
   flex: 1;
-  text-align: center; /* 文字居中对齐 */
+  text-align: center;
   color: #fff;
-  font-weight: bold;
+  font-size: 18px;
+  font-family: "楷体", sans-serif;
+  line-height: 1.5;
 }
 
 .overlay-text-predict .el-button {
+  width: 30%;
+  margin-top: 5px;
   border-radius: 50px; /* 圆角 */
   background-color: black;
   border: 2px solid #ff6347;
@@ -256,6 +288,8 @@ nav a {
 }
 
 .overlay-text-ai .el-button {
+  width: 30%;
+  margin-top: 5px;
   border-radius: 50px; /* 圆角 */
   background-color: rgba(255, 255, 255, 0.1);
   border: 2px solid #ff6347;
@@ -267,7 +301,6 @@ nav a {
   flex-direction: column;
   gap: 20px;
   margin-top: 10px;
-
   margin-left: 100px;
   margin-right: 100px;
 }
@@ -275,6 +308,7 @@ nav a {
 .row {
   display: flex;
   gap: 20px;
+  align-items: stretch;
 }
 
 .small-card {
@@ -293,6 +327,12 @@ nav a {
   text-decoration: none; /* 移除默认链接样式 */
   color: inherit; /* 继承父元素颜色 */
   border: 1px solid #dfdfdf;
+}
+
+.small-card:hover {
+  box-shadow: 0 12px 16px rgba(0, 0, 0, 0.2); /* 增加阴影 */
+  transform: scale(1.05); /* 缩放效果 */
+  transition: all 0.3s ease; /* 平滑过渡 */
 }
 
 .card-image {
@@ -322,7 +362,7 @@ nav a {
   height: 100%;
 }
 .card-title {
-  font-size: 1.2em;
+  font-size: 18px;
   margin-bottom: 10px;
 }
 
@@ -337,15 +377,20 @@ nav a {
   background-position: center;
   background-size: 98% 95%;
   background-repeat: no-repeat;
-  box-shadow: 0 4px 8px #a4a4a4;
-  padding: 10px;
+  box-shadow: 0 8px 8px #a4a4a4;
+  padding: 17px;
   border-radius: 5px;
   overflow: hidden;
   height: 200px;
-  text-decoration: none; /* 移除默认链接样式 */
-  color: inherit; /* 继承父元素颜色 */
+  text-decoration: none;
+  color: inherit;
   display: flex;
   border: 1px solid #c6c6c6;
+}
+.large-card:hover {
+  box-shadow: 0 12px 16px rgba(0, 0, 0, 0.2); /* 增加阴影 */
+  transform: scale(1.05); /* 缩放效果 */
+  transition: all 0.3s ease; /* 平滑过渡 */
 }
 
 .left-content {
