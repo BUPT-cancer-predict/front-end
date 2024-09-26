@@ -121,9 +121,7 @@
       >
     </div>
   </div>
-  <footer>
-    <p>&copy; 2024 BUPT. 版权所有</p>
-  </footer>
+  <pagefooter></pagefooter>
 </template>
 
 

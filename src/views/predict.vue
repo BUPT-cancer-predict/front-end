@@ -1,10 +1,12 @@
 <template>
   <div class="introduce">
-    <img
-      src="../assets/predict.png"
-      alt="Background Image"
-      class="background-image"
-    />
+    <video
+      src="../assets/video.mp4"
+      autoplay
+      muted
+      loop
+      class="background-video"
+    ></video>
     <header class="header">
       <div class="logo-container">
         <img src="../assets/logo.png" alt="Logo" class="logo" />
@@ -12,11 +14,21 @@
       </div>
       <nav>
         <ul>
-          <li><a href="#">个人中心</a></li>
-          <li><a href="#">在线咨询</a></li>
-          <li><a href="#">病情交流</a></li>
-          <li><a href="#">常见问题</a></li>
-          <li><a href="#">关于我们</a></li>
+          <li>
+            <router-link to="/personal-center">个人中心</router-link>
+          </li>
+          <li>
+            <router-link to="/online-consultation">在线咨询</router-link>
+          </li>
+          <li>
+            <router-link to="/disease-exchange">病情交流</router-link>
+          </li>
+          <li>
+            <router-link to="/faq">常见问题</router-link>
+          </li>
+          <li>
+            <router-link to="/about-us">关于我们</router-link>
+          </li>
         </ul>
       </nav>
     </header>
@@ -232,17 +244,15 @@
           :min="0"
         ></el-input-number>
       </el-form-item>
-
-      <el-form-item>
-        <div class="button-group">
-          <el-button type="primary" @click="submitForm(patientFormRef)"
-            >提交</el-button
-          >
-          <el-button @click="resetForm(patientFormRef)">重置</el-button>
-        </div>
-      </el-form-item>
     </el-form>
   </div>
+  <div class="button-group">
+    <el-button type="primary" @click="submitForm(patientFormRef)"
+      >提交</el-button
+    >
+    <el-button @click="resetForm(patientFormRef)">重置</el-button>
+  </div>
+  <pagefooter></pagefooter>
 </template>
   
   
@@ -428,14 +438,13 @@ export default {
   overflow: hidden;
 }
 
-.background-image {
+.background-video {
   position: absolute;
-  top: 40%;
+  top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -1;
 }
 
 .header {
@@ -460,8 +469,10 @@ export default {
 
 .logo-text {
   margin-left: 5px;
-  font-size: 16px;
-  color: #333;
+  font-family: "隶书", sans-serif;
+  font-size: 30px;
+  letter-spacing: 2px;
+  color: #fff;
 }
 
 nav ul {
@@ -472,20 +483,23 @@ nav ul {
 }
 
 nav li {
+  display: inline-block;
   margin-right: 20px;
 }
 
 nav a {
   text-decoration: none;
-  color: #333;
+  font-size: 18px;
+  color: #fff;
 }
 
 .patient-form {
   position: absolute;
-  top: 90%;
+  top: 52%;
   left: 50%;
   width: 50%;
-  height: auto;
+  height: 600px; /* 设置固定高度 */
+  overflow-y: auto; /* 加入手动滚动条 */
   transform: translate(-50%, -50%);
   z-index: 2;
   background-color: rgba(255, 255, 255, 0.8);
@@ -509,6 +523,11 @@ nav a {
 
 .button-group {
   display: flex;
-  margin-left: 130px;
+  justify-content: center;
+  margin-top: 30px;
+  position: absolute;
+  bottom: 10px; /* 距离底部的距离 */
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>

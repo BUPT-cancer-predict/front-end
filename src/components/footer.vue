@@ -1,34 +1,26 @@
 <template>
   <div id="page-footer">
     <div class="links">
-      <a href="#" class="link-item">产品中心</a>
-      <a href="#" class="link-item">公司介绍</a>
-      <a href="#" class="link-item">咨询</a>
-      <a href="#" class="link-item">介绍视频</a>
-      <a href="#" class="link-item">友情链接</a>
-      <a href="#" class="link-item">商务合作</a>
+      <router-link to="/about" class="link-item">关于我们</router-link>
+      <router-link to="/research" class="link-item">研究进展</router-link>
+      <router-link to="/contact" class="link-item">联系我们</router-link>
+      <router-link to="/instructions" class="link-item">使用说明</router-link>
+      <router-link to="/privacy" class="link-item">隐私政策</router-link>
+      <router-link to="/feedback" class="link-item">用户反馈</router-link>
     </div>
 
     <footer>
-      <p>&copy; 2024 BUPT. 版权所有</p>
+      <p>&copy; 2024 Cancer Prediction System. All rights reserved.</p>
     </footer>
   </div>
 </template>
 
 <style>
-.page-footer {
+#page-footer {
   margin-top: 20px;
-}
-
-.new-source-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  text-align: center;
 }
 
 .links {
-  margin-top: 20px;
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -37,6 +29,7 @@
 .link-item {
   text-decoration: none;
   color: #007bff;
+  font-size: 1em;
   font-weight: bold;
   padding: 5px 10px;
   border-radius: 5px;
@@ -49,7 +42,7 @@
 }
 
 footer {
-  margin-top: 0px;
+  margin-top: 10px;
   font-size: 0.8em;
   color: black;
   text-align: center;

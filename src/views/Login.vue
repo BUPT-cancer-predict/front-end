@@ -290,6 +290,7 @@
         </div>
       </form>
     </div>
+    <pagefooter></pagefooter>
   </div>
 </template>
 

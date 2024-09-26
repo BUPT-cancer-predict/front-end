@@ -1,12 +1,5 @@
 <template>
   <div class="main">
-    <!-- 标题区域 -->
-    <pagehead></pagehead>
-    <!-- 头部区域 -->
-    <!-- <div class="head">
-      <img src="@/assets/logo.png" alt="logo" class="logo" />
-      <div class="headline"><h1>预测系统</h1></div>
-    </div> -->
     <div class="big">
       <!-- 身体区域 -->
       <div class="container">
@@ -231,30 +224,6 @@
         <button @click="reset" style="margin-left: 20px">重新预测</button>
       </div>
     </div>
-    <!-- 下面是各项结果，是我用来测试是不是保存到数据里的，这些数据现在暂时应该没有用 -->
-    <!-- <div v-if="showFlag" class="output">
-      
-    {{ age }}
-    {{  familyHistory}}
-    {{ bmi }}
-    {{ pregnancyHistory }}
-    {{ deliveryHistory }}
-    {{ ca125 }}
-    {{ ca199 }}
-    {{ cancerSort }}
-    {{ sort }}
-{{ weirutou }}
-{{ highRisk }}
-{{ cancerCharacter }}
-{{ swellBreak }}
-{{ fenqi }}
-{{ surgeryMethod }}
-{{ surgeryRange }}
-{{ bilateralBorder }}
-{{ maximum }}
-
-
-  </div> -->
     <div class="feedback">
       <!-- 结果预测表 -->
       <el-descriptions
@@ -287,6 +256,7 @@
     </div>
     <pagefooter></pagefooter>
   </div>
+  <page-footer></page-footer>
 </template>
 <script>
 import { ElMessage } from "element-plus";
