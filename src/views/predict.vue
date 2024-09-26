@@ -38,218 +38,245 @@
       <h2>患者信息填写</h2>
       <span class="hint">(鼠标悬停对应的标签可获取简要提示说明)</span>
     </div>
-    <el-form
-      :model="patientForm"
-      :rules="rules"
-      ref="patientFormRef"
-      label-width="160px"
-    >
-      <el-form-item prop="ageAtDiagnosis">
-        <template #label>
-          <el-tooltip
-            content="请输入患者的确诊年龄，这会影响我们对您的病情的进一步判断"
-            placement="top"
+    <div class="form-container">
+      <el-form
+        :model="patientForm"
+        :rules="rules"
+        ref="patientFormRef"
+        label-width="160px"
+      >
+        <el-form-item prop="ageAtDiagnosis" class="center-form-item">
+          <template #label>
+            <el-tooltip
+              content="请输入患者的确诊年龄，这会影响我们对您的病情的进一步判断"
+              placement="top"
+            >
+              <span>确诊年龄</span>
+            </el-tooltip>
+          </template>
+          <el-input v-model.number="patientForm.ageAtDiagnosis"></el-input>
+        </el-form-item>
+
+        <el-form-item prop="familyHistory" class="center-form-item">
+          <template #label>
+            <el-tooltip
+              content="请输入患者的恶性肿瘤家族史，这会影响我们对您的病情的进一步判断"
+              placement="top"
+            >
+              <span>恶性肿瘤家族史</span>
+            </el-tooltip>
+          </template>
+          <el-radio-group
+            v-model="patientForm.familyHistory"
+            class="center-content"
           >
-            <span>确诊年龄</span>
-          </el-tooltip>
-        </template>
-        <el-input v-model.number="patientForm.ageAtDiagnosis"></el-input>
-      </el-form-item>
+            <el-radio :label="1">有</el-radio>
+            <el-radio :label="0">无</el-radio>
+          </el-radio-group>
+        </el-form-item>
 
-      <el-form-item prop="familyHistory">
-        <template #label>
-          <el-tooltip
-            content="请输入患者的恶性肿瘤家族史，这会影响我们对您的病情的进一步判断"
-            placement="top"
+        <el-form-item prop="bmi" class="center-form-item">
+          <template #label>
+            <el-tooltip
+              content="请输入患者的BMI，这会影响我们对您的病情的进一步判断"
+              placement="top"
+            >
+              <span>BMI</span>
+            </el-tooltip>
+          </template>
+          <el-input v-model.number="patientForm.bmi"></el-input>
+        </el-form-item>
+
+        <el-form-item prop="pregnancies" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的孕史" placement="top">
+              <span>孕史</span>
+            </el-tooltip>
+          </template>
+          <el-input
+            v-model="patientForm.pregnancies"
+            type="number"
+            :min="0"
+            @input="handleInput"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item prop="deliveries" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的产史" placement="top">
+              <span>产史</span>
+            </el-tooltip>
+          </template>
+          <el-input
+            v-model.number="patientForm.deliveries"
+            type="number"
+            :min="0"
+            @input="handleInput"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item prop="ca125" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的CA125" placement="top">
+              <span>CA125</span>
+            </el-tooltip>
+          </template>
+          <el-radio-group v-model="patientForm.ca125" class="center-content">
+            <el-radio :label="1">大于35</el-radio>
+            <el-radio :label="0">小于等于35</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item prop="ca199" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的CA199" placement="top">
+              <span>CA199</span>
+            </el-tooltip>
+          </template>
+          <el-radio-group v-model="patientForm.ca199" class="center-content">
+            <el-radio :label="1">大于40</el-radio>
+            <el-radio :label="0">小于等于40</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item prop="pathologyType" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的病理类型" placement="top">
+              <span>病理类型</span>
+            </el-tooltip>
+          </template>
+          <el-select
+            v-model="patientForm.pathologyType"
+            placeholder="请选择病理类型"
           >
-            <span>恶性肿瘤家族史</span>
-          </el-tooltip>
-        </template>
-        <el-radio-group v-model="patientForm.familyHistory">
-          <el-radio :label="1">有</el-radio>
-          <el-radio :label="0">无</el-radio>
-        </el-radio-group>
-      </el-form-item>
+            <el-option
+              v-for="item in pathologyTypes"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
 
-      <el-form-item prop="bmi">
-        <template #label>
-          <el-tooltip
-            content="请输入患者的BMI，这会影响我们对您的病情的进一步判断"
-            placement="top"
+        <el-form-item prop="microPapillary" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的微乳头数值" placement="top">
+              <span>微乳头</span>
+            </el-tooltip>
+          </template>
+          <el-radio-group
+            v-model="patientForm.microPapillary"
+            class="center-content"
           >
-            <span>BMI</span>
-          </el-tooltip>
-        </template>
-        <el-input v-model.number="patientForm.bmi"></el-input>
-      </el-form-item>
+            <el-radio :label="1">有</el-radio>
+            <el-radio :label="0">无</el-radio>
+          </el-radio-group>
+        </el-form-item>
 
-      <el-form-item prop="pregnancies">
-        <template #label>
-          <el-tooltip content="请输入患者的孕史" placement="top">
-            <span>孕史</span>
-          </el-tooltip>
-        </template>
-        <el-input-number
-          v-model="patientForm.pregnancies"
-          :min="0"
-        ></el-input-number>
-      </el-form-item>
+        <el-form-item prop="highRiskPathology" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的高危病理特征" placement="top">
+              <span>高危病理特征</span>
+            </el-tooltip>
+          </template>
+          <el-input v-model="patientForm.highRiskPathology"></el-input>
+        </el-form-item>
 
-      <el-form-item prop="deliveries">
-        <template #label>
-          <el-tooltip content="请输入患者的产史" placement="top">
-            <span>产史</span>
-          </el-tooltip>
-        </template>
-        <el-input-number
-          v-model="patientForm.deliveries"
-          :min="0"
-        ></el-input-number>
-      </el-form-item>
+        <el-form-item prop="cystRupture" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者术中是否见囊肿破裂" placement="top">
+              <span>术中是否见囊肿破裂</span>
+            </el-tooltip>
+          </template>
+          <el-radio-group
+            v-model="patientForm.cystRupture"
+            class="center-content"
+          >
+            <el-radio :label="1">是</el-radio>
+            <el-radio :label="0">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
 
-      <el-form-item prop="ca125">
-        <template #label>
-          <el-tooltip content="请输入患者的CA125" placement="top">
-            <span>CA125</span>
-          </el-tooltip>
-        </template>
-        <el-radio-group v-model="patientForm.ca125">
-          <el-radio :label="1">大于35</el-radio>
-          <el-radio :label="0">小于等于35</el-radio>
-        </el-radio-group>
-      </el-form-item>
+        <el-form-item prop="stage" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的分期情况" placement="top">
+              <span>分期</span>
+            </el-tooltip>
+          </template>
+          <el-select v-model="patientForm.stage" placeholder="请选择分期">
+            <el-option
+              v-for="item in stages"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
 
-      <el-form-item prop="ca199">
-        <template #label>
-          <el-tooltip content="请输入患者的CA199" placement="top">
-            <span>CA199</span>
-          </el-tooltip>
-        </template>
-        <el-radio-group v-model="patientForm.ca199">
-          <el-radio :label="1">大于40</el-radio>
-          <el-radio :label="0">小于等于40</el-radio>
-        </el-radio-group>
-      </el-form-item>
+        <el-form-item prop="surgeryMethod" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的手术方式" placement="top">
+              <span>手术方式</span>
+            </el-tooltip>
+          </template>
 
-      <el-form-item prop="pathologyType">
-        <template #label>
-          <el-tooltip content="请输入患者的病理类型" placement="top">
-            <span>病理类型</span>
-          </el-tooltip>
-        </template>
-        <el-select
-          v-model="patientForm.pathologyType"
-          placeholder="请选择病理类型"
-        >
-          <el-option
-            v-for="item in pathologyTypes"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </el-form-item>
+          <el-radio-group
+            v-model="patientForm.surgeryMethod"
+            class="center-content"
+          >
+            <el-radio :label="0">开腹</el-radio>
+            <el-radio :label="1">腹腔镜</el-radio>
+          </el-radio-group>
+        </el-form-item>
 
-      <el-form-item prop="microPapillary">
-        <template #label>
-          <el-tooltip content="请输入患者的微乳头数值" placement="top">
-            <span>微乳头</span>
-          </el-tooltip>
-        </template>
-        <el-radio-group v-model="patientForm.microPapillary">
-          <el-radio :label="1">有</el-radio>
-          <el-radio :label="0">无</el-radio>
-        </el-radio-group>
-      </el-form-item>
+        <el-form-item prop="surgeryScope" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的手术范围" placement="top">
+              <span>手术范围</span>
+            </el-tooltip>
+          </template>
+          <el-input v-model="patientForm.surgeryScope"></el-input>
+        </el-form-item>
 
-      <el-form-item prop="highRiskPathology">
-        <template #label>
-          <el-tooltip content="请输入患者的高危病理特征" placement="top">
-            <span>高危病理特征</span>
-          </el-tooltip>
-        </template>
-        <el-input v-model="patientForm.highRiskPathology"></el-input>
-      </el-form-item>
+        <el-form-item prop="bilateralBorderline" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的双侧交界" placement="top">
+              <span>双侧交界</span>
+            </el-tooltip>
+          </template>
+          <el-radio-group
+            v-model="patientForm.bilateralBorderline"
+            class="center-content"
+          >
+            <el-radio :label="1">单侧</el-radio>
+            <el-radio :label="2">双侧</el-radio>
+          </el-radio-group>
+        </el-form-item>
 
-      <el-form-item prop="cystRupture">
-        <template #label>
-          <el-tooltip content="请输入患者术中是否见囊肿破裂" placement="top">
-            <span>术中是否见囊肿破裂</span>
-          </el-tooltip>
-        </template>
-        <el-radio-group v-model="patientForm.cystRupture">
-          <el-radio :label="1">是</el-radio>
-          <el-radio :label="0">否</el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <el-form-item prop="stage">
-        <template #label>
-          <el-tooltip content="请输入患者的分期情况" placement="top">
-            <span>分期</span>
-          </el-tooltip>
-        </template>
-        <el-select v-model="patientForm.stage" placeholder="请选择分期">
-          <el-option
-            v-for="item in stages"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item prop="surgeryMethod">
-        <template #label>
-          <el-tooltip content="请输入患者的手术方式" placement="top">
-            <span>手术方式</span>
-          </el-tooltip>
-        </template>
-
-        <el-radio-group v-model="patientForm.surgeryMethod">
-          <el-radio :label="0">开腹</el-radio>
-          <el-radio :label="1">腹腔镜</el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <el-form-item prop="surgeryScope">
-        <template #label>
-          <el-tooltip content="请输入患者的手术范围" placement="top">
-            <span>手术范围</span>
-          </el-tooltip>
-        </template>
-        <el-input v-model="patientForm.surgeryScope"></el-input>
-      </el-form-item>
-
-      <el-form-item prop="bilateralBorderline">
-        <template #label>
-          <el-tooltip content="请输入患者的双侧交界" placement="top">
-            <span>双侧交界</span>
-          </el-tooltip>
-        </template>
-        <el-radio-group v-model="patientForm.bilateralBorderline">
-          <el-radio :label="1">单侧</el-radio>
-          <el-radio :label="2">双侧</el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <el-form-item prop="maxDiameter">
-        <template #label>
-          <el-tooltip content="请输入患者的最大径大小" placement="top">
-            <span>最大径大小</span>
-          </el-tooltip>
-        </template>
-        <el-input-number
-          v-model="patientForm.maxDiameter"
-          :min="0"
-        ></el-input-number>
-      </el-form-item>
-    </el-form>
+        <el-form-item prop="maxDiameter" class="center-form-item">
+          <template #label>
+            <el-tooltip content="请输入患者的最大径大小" placement="top">
+              <span>最大径大小</span>
+            </el-tooltip>
+          </template>
+          <el-input
+            v-model.number="patientForm.maxDiameter"
+            type="number"
+            :min="0"
+            @input="handleInput"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
   <div class="button-group">
-    <el-button type="primary" @click="submitForm(patientFormRef)"
-      >提交</el-button
+    <el-button
+      type="primary"
+      :disabled="isSubmitButtonDisabled"
+      @click="submitForm(patientFormRef)"
     >
+      提交 ({{ Math.round(fillPercentage) }}%)
+    </el-button>
     <el-button @click="resetForm(patientFormRef)">重置</el-button>
   </div>
   <pagefooter></pagefooter>
@@ -258,6 +285,8 @@
   
   <script>
 import axios from "axios";
+import { ref, reactive, computed } from "vue";
+
 import {
   ElMessage,
   ElForm,
@@ -272,7 +301,7 @@ import {
   ElProgress,
   ElButton,
 } from "element-plus";
-import { ref } from "vue";
+
 export default {
   conponents: {
     ElForm,
@@ -289,7 +318,8 @@ export default {
   },
 
   setup() {
-    const patientForm = ref({
+    const patientFormRef = ref(null);
+    const patientForm = reactive({
       ageAtDiagnosis: null,
       familyHistory: null,
       bmi: null,
@@ -326,6 +356,9 @@ export default {
       microPapillary: [
         { required: true, message: "请选择微乳头", trigger: "change" },
       ],
+      highRiskPathology: [
+        { required: true, message: "请输入高危病理特征", trigger: "change" },
+      ],
       cystRupture: [
         {
           required: true,
@@ -336,6 +369,9 @@ export default {
       stage: [{ required: true, message: "请选择分期", trigger: "change" }],
       surgeryMethod: [
         { required: true, message: "请选择手术方式", trigger: "change" },
+      ],
+      surgeryScope: [
+        { required: true, message: "请输入手术范围", trigger: "blur" },
       ],
       bilateralBorderline: [
         { required: true, message: "请选择双侧交界", trigger: "change" },
@@ -357,7 +393,31 @@ export default {
       // 根据实际情况添加更多选项
     ];
 
-    const patientFormRef = ref(null);
+    const handleInput = (value) => {
+      // 确保是非负数字
+      value = Math.max(0, parseInt(value));
+
+      // 更新对应输入框的值
+      patientForm.value[value] = value;
+    };
+
+    // 计算填写进度
+    const filledFieldsCount = computed(() => {
+      return Object.values(patientForm).filter(
+        (value) => value !== null && value !== ""
+      ).length;
+    });
+
+    const totalFields = Object.keys(patientForm).length;
+
+    const fillPercentage = computed(() => {
+      return (filledFieldsCount.value / totalFields) * 100;
+    });
+
+    // 控制提交按钮状态
+    const isSubmitButtonDisabled = computed(() => {
+      return filledFieldsCount.value < totalFields;
+    });
 
     const submitForm = (formEl) => {
       if (!formEl) return;
@@ -426,6 +486,9 @@ export default {
       patientFormRef,
       submitForm,
       resetForm,
+      fillPercentage,
+      isSubmitButtonDisabled,
+      handleInput,
     };
   },
 };
@@ -498,11 +561,23 @@ nav a {
   top: 52%;
   left: 50%;
   width: 50%;
-  height: 600px; /* 设置固定高度 */
-  overflow-y: auto; /* 加入手动滚动条 */
   transform: translate(-50%, -50%);
   z-index: 2;
   background-color: rgba(255, 255, 255, 0.8);
+}
+.form-container {
+  height: 500px; /* 设置固定高度 */
+  overflow-y: auto; /* 加入手动滚动条 */
+}
+.center-form-item {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center;
+}
+
+.center-content {
+  display: flex;
+  justify-content: center;
 }
 
 .el-input,
