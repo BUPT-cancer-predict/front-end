@@ -317,24 +317,30 @@
         style="width: 100%"
         header-cell-style="background-color: #666; color: #fff;"
       >
-        <el-table-column
-          prop="label"
-          label="项目"
-          width="200"
-          align="center"
-        ></el-table-column>
+        <el-table-column prop="label" label="项目" width="200" align="center">
+        </el-table-column>
         <el-table-column prop="value" label="值" align="center">
           <template #default="{ row }">
             <div v-if="row.key === 'recurrenceProbability'">
               {{ row.value }}%
             </div>
             <div v-else-if="row.key === 'riskLevel'">
-              <el-tag :type="riskLevelType" effect="dark" size="large">
+              <el-tag
+                :type="riskLevelType"
+                effect="dark"
+                size="large"
+                class="custom-tag"
+              >
                 {{ row.value }}
               </el-tag>
             </div>
             <div v-else-if="row.key === 'suggestions'">
-              <el-tag type="success" effect="dark" size="large">
+              <el-tag
+                type="success"
+                effect="dark"
+                size="large"
+                class="custom-tag"
+              >
                 {{ row.value }}
               </el-tag>
             </div>
@@ -343,8 +349,9 @@
       </el-table>
     </div>
     <div>
-      <div class="download" @click="generateWordDocument">
-        <el-button>下载完整预测报告</el-button>
+      <div class="download">
+        <el-button @click="generateWordDocument">下载完整预测报告</el-button>
+        <el-button @click="goBackAndReset">返回填写表单</el-button>
       </div>
     </div>
   </div>
@@ -355,8 +362,16 @@
   <script>
 import axios from "axios";
 import { ref, reactive, computed } from "vue";
-import { Document, Packer, Paragraph, TextRun } from "docx";
-import jsPDF from "jspdf";
+import {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  Table,
+  TableRow,
+  TableCell,
+  WidthType,
+} from "docx";
 import "jspdf-autotable";
 import { saveAs } from "file-saver";
 
@@ -416,6 +431,8 @@ export default {
       bilateralBorderline: null,
       maxDiameter: null,
     });
+
+    //假数据
     const fakeData = {
       recurrenceProbability: 20,
       riskLevel: "中风险",
@@ -509,7 +526,7 @@ export default {
           ElMessage({ message: "正在提交数据...", type: "info" });
 
           axios
-            .post("http://localhost:3008/predict", patientForm.value)
+            .post("api/submit-predict", patientForm.value)
             .then((response) => {
               // 隐藏加载提示
               ElMessage.success("提交成功！");
@@ -557,9 +574,16 @@ export default {
       }
     };
 
+    const goBackAndReset = () => {
+      showResult.value = false;
+      resetForm(patientFormRef.value);
+    };
+
     const resetForm = (formEl) => {
-      // if (!formEl) return;
-      // formEl.resetFields();
+      if (!formEl) return;
+      formEl.resetFields();
+
+      //下删
       showResult.value = !showResult.value;
       updateTableData(fakeData);
     };
@@ -567,96 +591,504 @@ export default {
     const downloadFormat = ref(null);
 
     const generateWordDocument = () => {
+      // 假数据
+      const patientForm = {
+        ageAtDiagnosis: 45,
+        familyHistory: true,
+        bmi: 27.5,
+        pregnancies: 2,
+        deliveries: 1,
+        ca125: 1,
+        ca199: 0,
+        pathologyType: "腺癌",
+        microPapillary: false,
+        highRiskPathology: "高风险",
+        cystRupture: true,
+        stage: "IIA",
+        surgeryMethod: 1,
+        surgeryScope: "广泛子宫切除术",
+        bilateralBorderline: 0,
+        maxDiameter: 5.2,
+      };
+
+      const tableData = {
+        value: [
+          { key: "recurrenceProbability", value: 30 },
+          { key: "riskLevel", value: "中风险" },
+          { key: "suggestions", value: "定期复查" },
+        ],
+      };
+
+      // 获取当前时间
+      const now = new Date();
+      const formattedDate = `${now.getFullYear()}年${
+        now.getMonth() + 1
+      }月${now.getDate()}日 ${now.getHours()}时${now.getMinutes()}分${now.getSeconds()}秒`;
+
       const doc = new Document({
         sections: [
           {
             children: [
+              // 添加一级标题“预测报告”
               new Paragraph({
-                text: "患者信息",
                 heading: "heading_1",
-              }),
-              new Paragraph({
-                text: `确诊年龄: ${patientForm.ageAtDiagnosis}`,
-              }),
-              new Paragraph({
-                text: `恶性肿瘤家族史: ${
-                  patientForm.familyHistory ? "有" : "无"
-                }`,
-              }),
-              new Paragraph({
-                text: `BMI: ${patientForm.bmi}`,
-              }),
-              new Paragraph({
-                text: `孕史: ${patientForm.pregnancies}`,
-              }),
-              new Paragraph({
-                text: `产史: ${patientForm.deliveries}`,
-              }),
-              new Paragraph({
-                text: `CA125: ${
-                  patientForm.ca125 === 1 ? "大于35" : "小于等于35"
-                }`,
-              }),
-              new Paragraph({
-                text: `CA199: ${
-                  patientForm.ca199 === 1 ? "大于40" : "小于等于40"
-                }`,
-              }),
-              new Paragraph({
-                text: `病理类型: ${patientForm.pathologyType}`,
-              }),
-              new Paragraph({
-                text: `微乳头: ${patientForm.microPapillary ? "有" : "无"}`,
-              }),
-              new Paragraph({
-                text: `高危病理特征: ${patientForm.highRiskPathology}`,
-              }),
-              new Paragraph({
-                text: `术中是否见囊肿破裂: ${
-                  patientForm.cystRupture ? "是" : "否"
-                }`,
-              }),
-              new Paragraph({
-                text: `分期: ${patientForm.stage}`,
-              }),
-              new Paragraph({
-                text: `手术方式: ${
-                  patientForm.surgeryMethod === 0 ? "开腹" : "腹腔镜"
-                }`,
-              }),
-              new Paragraph({
-                text: `手术范围: ${patientForm.surgeryScope}`,
-              }),
-              new Paragraph({
-                text: `双侧交界: ${
-                  patientForm.bilateralBorderline === 1 ? "单侧" : "双侧"
-                }`,
-              }),
-              new Paragraph({
-                text: `最大径大小: ${patientForm.maxDiameter}`,
+                alignment: "center",
+                children: [
+                  new TextRun({
+                    text: "预测报告",
+                    bold: true,
+                    size: 28,
+                  }),
+                ],
               }),
 
+              // 添加当前时间
               new Paragraph({
-                text: "预测结果",
-                heading: "heading_1",
+                text: formattedDate,
+                alignment: "center",
+                size: 18,
               }),
+
+              //增加一个空行
               new Paragraph({
-                text: `复发概率: ${
-                  tableData.value.find(
-                    (item) => item.key === "recurrenceProbability"
-                  ).value
-                }%`,
+                text: " ",
               }),
+
+              // 预测结果二级标题
               new Paragraph({
-                text: `风险等级: ${
-                  tableData.value.find((item) => item.key === "riskLevel").value
-                }`,
+                heading: "heading_2",
+                alignment: "center",
+                children: [
+                  new TextRun({
+                    text: "预测结果",
+                    bold: true,
+                    size: 22,
+                  }),
+                ],
               }),
+
+              // 预测结果表格
+              new Table({
+                widths: ["40", "60"],
+                alignment: "center",
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        width: { size: 40, type: WidthType.PERCENTAGE },
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "复发概率",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        width: { size: 60, type: WidthType.PERCENTAGE },
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${
+                              tableData.value.find(
+                                (item) => item.key === "recurrenceProbability"
+                              ).value
+                            }%`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "风险等级",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${
+                              tableData.value.find(
+                                (item) => item.key === "riskLevel"
+                              ).value
+                            }`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({ alignment: "center", text: "建议" }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${
+                              tableData.value.find(
+                                (item) => item.key === "suggestions"
+                              ).value
+                            }`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+
+              //增加一个空行
               new Paragraph({
-                text: `建议: ${
-                  tableData.value.find((item) => item.key === "suggestions")
-                    .value
-                }`,
+                text: " ", // 添加一个空行
+              }),
+
+              // 患者信息二级标题
+              new Paragraph({
+                heading: "heading_2",
+                alignment: "center",
+                children: [
+                  new TextRun({
+                    text: "患者信息",
+                    bold: true,
+                    size: 22,
+                  }),
+                ],
+              }),
+
+              // 患者信息表格
+              new Table({
+                widths: ["30", "70"],
+                alignment: "center",
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        width: { size: 30, type: WidthType.PERCENTAGE },
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "确诊年龄",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        width: { size: 70, type: WidthType.PERCENTAGE },
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.ageAtDiagnosis}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "恶性肿瘤家族史",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.familyHistory ? "有" : "无"}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({ alignment: "center", text: "BMI" }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.bmi}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({ alignment: "center", text: "孕史" }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.pregnancies}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({ alignment: "center", text: "产史" }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.deliveries}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({ alignment: "center", text: "CA125" }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${
+                              patientForm.ca125 === 1 ? "大于35" : "小于等于35"
+                            }`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({ alignment: "center", text: "CA199" }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${
+                              patientForm.ca199 === 1 ? "大于40" : "小于等于40"
+                            }`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "病理类型",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.pathologyType}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "微乳头",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.microPapillary ? "有" : "无"}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "高危病理特征",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.highRiskPathology}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "术中是否见囊肿破裂",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.cystRupture ? "是" : "否"}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "分期",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.stage}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "手术方式",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${
+                              patientForm.surgeryMethod === 0
+                                ? "开腹"
+                                : "腹腔镜"
+                            }`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "手术范围",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.surgeryScope}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "双侧交界",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${
+                              patientForm.bilateralBorderline === 1
+                                ? "单侧"
+                                : "双侧"
+                            }`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: "最大径大小",
+                          }),
+                        ],
+                      }),
+                      new TableCell({
+                        children: [
+                          new Paragraph({
+                            alignment: "center",
+                            text: `${patientForm.maxDiameter}`,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
               }),
             ],
           },
@@ -683,9 +1115,11 @@ export default {
       tableData,
       updateTableData,
       showResult,
-      fakeData,
+      goBackAndReset,
       downloadFormat,
       generateWordDocument,
+      //假数据测试
+      fakeData,
     };
   },
 };
@@ -842,6 +1276,7 @@ nav a {
 
 .el-table {
   width: 90%;
+  font-size: 14px;
 }
 
 .el-table th,
@@ -870,6 +1305,12 @@ nav a {
   font-size: 20px;
   font-weight: bold;
   margin: 0;
+}
+
+.custom-tag {
+  font-size: 14px; /* 字体大小 */
+  border-radius: 8px; /* 边框圆角 */
+  color: #333; /* 文字颜色 */
 }
 
 .download .el-button {
