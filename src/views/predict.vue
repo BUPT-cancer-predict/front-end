@@ -9,7 +9,9 @@
     ></video>
     <header class="header">
       <div class="logo-container">
-        <img src="../assets/logo.png" alt="Logo" class="logo" />
+        <router-link to="/" class="logo-link">
+          <img src="../assets/logo.png" alt="Logo" class="logo" />
+        </router-link>
         <span class="logo-text">沐光健康平台</span>
       </div>
       <nav>
@@ -54,7 +56,12 @@
               <span>确诊年龄</span>
             </el-tooltip>
           </template>
-          <el-input v-model.number="patientForm.ageAtDiagnosis"></el-input>
+          <el-input
+            v-model.number="patientForm.ageAtDiagnosis"
+            type="number"
+            :min="0"
+            class="center-input"
+          ></el-input>
         </el-form-item>
 
         <el-form-item prop="familyHistory" class="center-form-item">
@@ -84,7 +91,12 @@
               <span>BMI</span>
             </el-tooltip>
           </template>
-          <el-input v-model.number="patientForm.bmi"></el-input>
+          <el-input
+            v-model.number="patientForm.bmi"
+            type="number"
+            :min="0"
+            class="center-input"
+          ></el-input>
         </el-form-item>
 
         <el-form-item prop="pregnancies" class="center-form-item">
@@ -94,10 +106,10 @@
             </el-tooltip>
           </template>
           <el-input
-            v-model="patientForm.pregnancies"
+            v-model.number="patientForm.pregnancies"
             type="number"
             :min="0"
-            @input="handleInput"
+            class="center-input"
           ></el-input>
         </el-form-item>
 
@@ -111,7 +123,7 @@
             v-model.number="patientForm.deliveries"
             type="number"
             :min="0"
-            @input="handleInput"
+            class="center-input"
           ></el-input>
         </el-form-item>
 
@@ -179,7 +191,10 @@
               <span>高危病理特征</span>
             </el-tooltip>
           </template>
-          <el-input v-model="patientForm.highRiskPathology"></el-input>
+          <el-input
+            v-model="patientForm.highRiskPathology"
+            placeholder="用逗号分割"
+          ></el-input>
         </el-form-item>
 
         <el-form-item prop="cystRupture" class="center-form-item">
@@ -235,7 +250,10 @@
               <span>手术范围</span>
             </el-tooltip>
           </template>
-          <el-input v-model="patientForm.surgeryScope"></el-input>
+          <el-input
+            v-model="patientForm.surgeryScope"
+            placeholder="用逗号分割"
+          ></el-input>
         </el-form-item>
 
         <el-form-item prop="bilateralBorderline" class="center-form-item">
@@ -263,7 +281,7 @@
             v-model.number="patientForm.maxDiameter"
             type="number"
             :min="0"
-            @input="handleInput"
+            class="center-input"
           ></el-input>
         </el-form-item>
       </el-form>
@@ -393,14 +411,6 @@ export default {
       // 根据实际情况添加更多选项
     ];
 
-    const handleInput = (value) => {
-      // 确保是非负数字
-      value = Math.max(0, parseInt(value));
-
-      // 更新对应输入框的值
-      patientForm.value[value] = value;
-    };
-
     // 计算填写进度
     const filledFieldsCount = computed(() => {
       return Object.values(patientForm).filter(
@@ -468,7 +478,7 @@ export default {
 
     const navigateToNextPage = (data) => {
       // 假设跳转到 `/next-page` 并携带响应数据
-      window.location.href = `/present?data=${encodeURIComponent(
+      window.location.href = `/predict-result?data=${encodeURIComponent(
         JSON.stringify(data)
       )}`;
     };
@@ -488,13 +498,12 @@ export default {
       resetForm,
       fillPercentage,
       isSubmitButtonDisabled,
-      handleInput,
     };
   },
 };
 </script>
   
-  <style scoped>
+  <style >
 .introduce {
   position: relative;
   height: 100vh;
@@ -574,16 +583,37 @@ nav a {
   justify-content: center; /* 水平居中 */
   align-items: center;
 }
-
 .center-content {
   display: flex;
   justify-content: center;
 }
+.center-input .el-input__inner {
+  text-align: center;
+}
 
 .el-input,
-.el-select,
 .el-radio-group {
-  width: calc(120% - 160px);
+  width: 90%;
+}
+.el-select {
+  width: 90%;
+  text-align: center;
+}
+
+.el-select .el-input {
+  width: 100%;
+}
+
+.el-select__popper {
+  width: 48%;
+  max-width: 48%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-21%);
+}
+
+.el-select-dropdown .el-scrollbar__wrap .el-select-dropdown__item {
+  text-align: center;
 }
 
 .overlay {

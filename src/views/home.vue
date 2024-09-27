@@ -9,7 +9,9 @@
     ></video>
     <header class="header">
       <div class="logo-container">
-        <img src="../assets/logo.png" alt="Logo" class="logo" />
+        <router-link to="/" class="logo-link">
+          <img src="../assets/logo.png" alt="Logo" class="logo" />
+        </router-link>
         <span class="logo-text">沐光健康平台</span>
       </div>
       <nav>
