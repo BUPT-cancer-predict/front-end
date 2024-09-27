@@ -8,7 +8,6 @@ import Exchange from '../views/Exchange.vue'
 import Faq from '../views/Faq.vue'
 import About from '../views/About.vue'
 import Ai from '../views/Ai.vue'
-import PredictResult from '../views/PredictResult.vue'
 import Test from '../views/test.vue'
 
 const routes = [
@@ -57,11 +56,7 @@ const routes = [
     name: 'ai',
     component: Ai
   },
-  {
-    path: '/predict-result',
-    name: 'predict-result',
-    component: PredictResult
-  },
+
   {
     path: '/test',
     name: 'test',

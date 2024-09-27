@@ -35,10 +35,9 @@
       </nav>
     </header>
   </div>
-  <div class="patient-form">
+  <div class="patient-form" v-if="!showResult">
     <div class="overlay">
-      <h2>患者信息填写</h2>
-      <span class="hint">(鼠标悬停对应的标签可获取简要提示说明)</span>
+      <h3>请填写您的信息</h3>
     </div>
     <div class="form-container">
       <el-form
@@ -160,6 +159,7 @@
           <el-select
             v-model="patientForm.pathologyType"
             placeholder="请选择病理类型"
+            class="center-input"
           >
             <el-option
               v-for="item in pathologyTypes"
@@ -194,6 +194,7 @@
           <el-input
             v-model="patientForm.highRiskPathology"
             placeholder="用逗号分割"
+            class="center-input"
           ></el-input>
         </el-form-item>
 
@@ -218,7 +219,11 @@
               <span>分期</span>
             </el-tooltip>
           </template>
-          <el-select v-model="patientForm.stage" placeholder="请选择分期">
+          <el-select
+            v-model="patientForm.stage"
+            placeholder="请选择分期"
+            class="center-input"
+          >
             <el-option
               v-for="item in stages"
               :key="item.value"
@@ -253,6 +258,7 @@
           <el-input
             v-model="patientForm.surgeryScope"
             placeholder="用逗号分割"
+            class="center-input"
           ></el-input>
         </el-form-item>
 
@@ -297,6 +303,58 @@
     </el-button>
     <el-button @click="resetForm(patientFormRef)">重置</el-button>
   </div>
+
+  <div class="result" v-if="showResult">
+    <div class="result-header">
+      <div class="title-container">
+        <div class="title">预测结果</div>
+      </div>
+    </div>
+    <div class="result-form">
+      <el-table
+        :data="tableData"
+        border
+        style="width: 100%"
+        header-cell-style="background-color: #666; color: #fff;"
+      >
+        <el-table-column prop="label" label="项目" width="200" align="center">
+        </el-table-column>
+        <el-table-column prop="value" label="值" align="center">
+          <template #default="{ row }">
+            <div v-if="row.key === 'recurrenceProbability'">
+              {{ row.value }}%
+            </div>
+            <div v-else-if="row.key === 'riskLevel'">
+              <el-tag
+                :type="riskLevelType"
+                effect="dark"
+                size="large"
+                class="custom-tag"
+              >
+                {{ row.value }}
+              </el-tag>
+            </div>
+            <div v-else-if="row.key === 'suggestions'">
+              <el-tag
+                type="success"
+                effect="dark"
+                size="large"
+                class="custom-tag"
+              >
+                {{ row.value }}
+              </el-tag>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div>
+      <div class="download">
+        <el-button @click="generateWordDocument">下载完整预测报告</el-button>
+        <el-button @click="goBackAndReset">返回填写表单</el-button>
+      </div>
+    </div>
+  </div>
   <pagefooter></pagefooter>
 </template>
   
@@ -304,6 +362,9 @@
   <script>
 import axios from "axios";
 import { ref, reactive, computed } from "vue";
+import { Column, Document, Packer, Paragraph, TextRun } from "docx";
+import "jspdf-autotable";
+import { saveAs } from "file-saver";
 
 import {
   ElMessage,
@@ -318,6 +379,9 @@ import {
   ElLoading,
   ElProgress,
   ElButton,
+  ElTable,
+  ElTableColumn,
+  ElTag,
 } from "element-plus";
 
 export default {
@@ -333,6 +397,9 @@ export default {
     ElLoading,
     ElProgress,
     ElButton,
+    ElTable,
+    ElTableColumn,
+    ElTag,
   },
 
   setup() {
@@ -355,6 +422,13 @@ export default {
       bilateralBorderline: null,
       maxDiameter: null,
     });
+
+    //假数据
+    const fakeData = {
+      recurrenceProbability: 20,
+      riskLevel: "中风险",
+      suggestions: "定期复查，注意休息",
+    };
 
     const rules = {
       ageAtDiagnosis: [
@@ -429,26 +503,30 @@ export default {
       return filledFieldsCount.value < totalFields;
     });
 
+    const tableData = ref([]);
+
+    const showResult = ref(false);
+
+    const riskLevelType = ref("warning");
+
     const submitForm = (formEl) => {
       if (!formEl) return;
       formEl.validate((valid) => {
         if (valid) {
-          const loadingInstance = ElLoading.service({
-            lock: true,
-            text: "正在提交数据...",
-            spinner: "el-icon-loading",
-            background: "rgba(0, 0, 0, 0.7)",
-          });
+          // 显示加载提示
+          ElMessage({ message: "正在提交数据...", type: "info" });
 
           axios
-            .post("/api/submit-patient-form", patientForm.value)
+            .post("api/submit-predict", patientForm.value)
             .then((response) => {
-              loadingInstance.close();
+              // 隐藏加载提示
               ElMessage.success("提交成功！");
               showProgress(response.data);
+              updateTableData(response.data);
+              showResult.value = true;
             })
             .catch((error) => {
-              loadingInstance.close();
+              // 隐藏加载提示
               ElMessage.error("提交失败：" + error.message);
             });
         } else {
@@ -459,33 +537,150 @@ export default {
     };
 
     const showProgress = (data) => {
-      const progressInstance = ElProgress.service({
-        percentage: 0,
-        status: "active",
-        duration: 0,
-      });
+      // 使用消息提示代替进度条
+      ElMessage({ message: "数据处理中...", type: "info" });
 
-      let intervalId = setInterval(() => {
-        progressInstance.percentage += 10;
-        if (progressInstance.percentage >= 100) {
-          clearInterval(intervalId);
-          progressInstance.percentage = 100;
-          progressInstance.status = "success";
-          navigateToNextPage(data);
-        }
-      }, 500);
+      setTimeout(() => {
+        ElMessage.success("数据处理完成");
+      }, 3000);
     };
 
-    const navigateToNextPage = (data) => {
-      // 假设跳转到 `/next-page` 并携带响应数据
-      window.location.href = `/predict-result?data=${encodeURIComponent(
-        JSON.stringify(data)
-      )}`;
+    const updateTableData = (data) => {
+      tableData.value = [
+        {
+          label: "复发概率",
+          key: "recurrenceProbability",
+          value: data.recurrenceProbability,
+        },
+        { label: "风险等级", key: "riskLevel", value: data.riskLevel },
+        { label: "建议", key: "suggestions", value: data.suggestions },
+      ];
+
+      if (data.riskLevel === "低风险") {
+        riskLevelType.value = "success";
+      } else if (data.riskLevel === "中风险") {
+        riskLevelType.value = "warning";
+      } else if (data.riskLevel === "高风险") {
+        riskLevelType.value = "danger";
+      }
+    };
+
+    const goBackAndReset = () => {
+      showResult.value = false;
+      resetForm(patientFormRef.value);
     };
 
     const resetForm = (formEl) => {
       if (!formEl) return;
       formEl.resetFields();
+
+      //下删
+      showResult.value = !showResult.value;
+      updateTableData(fakeData);
+    };
+
+    const downloadFormat = ref(null);
+
+    const generateWordDocument = () => {
+      const doc = new Document({
+        sections: [
+          {
+            children: [
+              new Paragraph({
+                text: "患者信息",
+                heading: "heading_1",
+              }),
+              new Paragraph({
+                text: `确诊年龄: ${patientForm.ageAtDiagnosis}`,
+              }),
+              new Paragraph({
+                text: `恶性肿瘤家族史: ${
+                  patientForm.familyHistory ? "有" : "无"
+                }`,
+              }),
+              new Paragraph({
+                text: `BMI: ${patientForm.bmi}`,
+              }),
+              new Paragraph({
+                text: `孕史: ${patientForm.pregnancies}`,
+              }),
+              new Paragraph({
+                text: `产史: ${patientForm.deliveries}`,
+              }),
+              new Paragraph({
+                text: `CA125: ${
+                  patientForm.ca125 === 1 ? "大于35" : "小于等于35"
+                }`,
+              }),
+              new Paragraph({
+                text: `CA199: ${
+                  patientForm.ca199 === 1 ? "大于40" : "小于等于40"
+                }`,
+              }),
+              new Paragraph({
+                text: `病理类型: ${patientForm.pathologyType}`,
+              }),
+              new Paragraph({
+                text: `微乳头: ${patientForm.microPapillary ? "有" : "无"}`,
+              }),
+              new Paragraph({
+                text: `高危病理特征: ${patientForm.highRiskPathology}`,
+              }),
+              new Paragraph({
+                text: `术中是否见囊肿破裂: ${
+                  patientForm.cystRupture ? "是" : "否"
+                }`,
+              }),
+              new Paragraph({
+                text: `分期: ${patientForm.stage}`,
+              }),
+              new Paragraph({
+                text: `手术方式: ${
+                  patientForm.surgeryMethod === 0 ? "开腹" : "腹腔镜"
+                }`,
+              }),
+              new Paragraph({
+                text: `手术范围: ${patientForm.surgeryScope}`,
+              }),
+              new Paragraph({
+                text: `双侧交界: ${
+                  patientForm.bilateralBorderline === 1 ? "单侧" : "双侧"
+                }`,
+              }),
+              new Paragraph({
+                text: `最大径大小: ${patientForm.maxDiameter}`,
+              }),
+
+              new Paragraph({
+                text: "预测结果",
+                heading: "heading_1",
+              }),
+              new Paragraph({
+                text: `复发概率: ${
+                  tableData.value.find(
+                    (item) => item.key === "recurrenceProbability"
+                  ).value
+                }%`,
+              }),
+              new Paragraph({
+                text: `风险等级: ${
+                  tableData.value.find((item) => item.key === "riskLevel").value
+                }`,
+              }),
+              new Paragraph({
+                text: `建议: ${
+                  tableData.value.find((item) => item.key === "suggestions")
+                    .value
+                }`,
+              }),
+            ],
+          },
+        ],
+      });
+
+      Packer.toBlob(doc).then((blob) => {
+        saveAs(blob, "预测报告.docx");
+      });
     };
 
     return {
@@ -498,12 +693,22 @@ export default {
       resetForm,
       fillPercentage,
       isSubmitButtonDisabled,
+      showResult,
+      riskLevelType,
+      tableData,
+      updateTableData,
+      showResult,
+      goBackAndReset,
+      downloadFormat,
+      generateWordDocument,
+      //假数据测试
+      fakeData,
     };
   },
 };
 </script>
   
-  <style >
+  <style scoped>
 .introduce {
   position: relative;
   height: 100vh;
@@ -573,9 +778,17 @@ nav a {
   transform: translate(-50%, -50%);
   z-index: 2;
   background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+.overlay {
+  text-align: center;
+}
+
 .form-container {
   height: 500px; /* 设置固定高度 */
+  width: 700px;
   overflow-y: auto; /* 加入手动滚动条 */
 }
 .center-form-item {
@@ -600,10 +813,6 @@ nav a {
   text-align: center;
 }
 
-.el-select .el-input {
-  width: 100%;
-}
-
 .el-select__popper {
   width: 48%;
   max-width: 48%;
@@ -616,16 +825,6 @@ nav a {
   text-align: center;
 }
 
-.overlay {
-  text-align: center;
-}
-
-.hint {
-  font-size: 14px;
-  color: #666;
-  margin-left: 3px;
-}
-
 .button-group {
   display: flex;
   justify-content: center;
@@ -634,5 +833,77 @@ nav a {
   bottom: 10px; /* 距离底部的距离 */
   left: 50%;
   transform: translateX(-50%);
+}
+
+.result {
+  position: absolute;
+  top: 30%; /* 调整顶部位置 */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3; /* 确保在表单之上 */
+  width: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result-form {
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 10px;
+  width: 90%;
+}
+
+.el-table {
+  width: 90%;
+  font-size: 14px;
+}
+
+.el-table th,
+.el-table td {
+  white-space: nowrap;
+}
+
+.el-table-column {
+  width: auto;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.title-container {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.custom-tag {
+  font-size: 14px; /* 字体大小 */
+  border-radius: 8px; /* 边框圆角 */
+  color: #333; /* 文字颜色 */
+}
+
+.download .el-button {
+  border-radius: 50px; /* 圆角 */
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid #ff6347;
+  color: rgb(14, 13, 13);
+  font-weight: bold;
+  width: 200px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 </style>

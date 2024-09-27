@@ -1,37 +1,84 @@
 {
-    "login": [
-        {
-            "success": "true",
-            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-            "message": "登录成功",
-            "id": "2d06"
-        }
-    ],
-    "register": [
-        {
-            "id": "575c",
-            "username": "123",
-            "email": "123@qq.com",
-            "password": "123",
-            "confirmPassword": "123"
-        }
-    ],
-    "email": [
-        {
-            "account": "123",
-            "email": "123@qq.com"
-        }
-    ],
-    "send-captcha": [
-        {
-            "success": "true",
-            "message": "发送成功"
-        }
-    ],
-    "reset-password": [
-        {
-            "success": "true",
-            "message": "重置成功"
-        }
-    ]
+  "login": [
+    {
+      "success": "true",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+      "message": "登录成功",
+      "id": "2d06"
+    }
+  ],
+  "register": [
+    {
+      "id": "575c",
+      "username": "123",
+      "email": "123@qq.com",
+      "password": "123",
+      "confirmPassword": "123"
+    }
+  ],
+  "email": [
+    {
+      "account": "123",
+      "email": "123@qq.com",
+      "id": "bf80"
+    }
+  ],
+  "send-captcha": [
+    {
+      "success": "true",
+      "message": "发送成功",
+      "id": "921a"
+    }
+  ],
+  "reset-password": [
+    {
+      "success": "true",
+      "message": "重置成功",
+      "id": "c5e2"
+    }
+  ],
+  "predict": [
+    {
+      "recurrenceProbability": 0.85,
+      "riskLevel": "高风险",
+      "suggestions": "定期复查，注意休息",
+      "id": "9a9d"
+    },
+    {
+      "id": "7fac"
+    },
+    {
+      "id": "f2ae"
+    },
+    {
+      "id": "24db"
+    },
+    {
+      "id": "9f18"
+    },
+    {
+      "id": "16bd"
+    },
+    {
+      "id": "97f2"
+    },
+    {
+      "id": "3e0e"
+    },
+    {
+      "id": "7b87"
+    },
+    {
+      "id": "76c7"
+    },
+    {
+      "id": "1bc3"
+    },
+    {
+      "id": "2bd4"
+    },
+    {
+      "id": "6250"
+    }
+  ]
 }

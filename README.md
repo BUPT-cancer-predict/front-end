@@ -33,7 +33,6 @@ Consultation.vue  咨询页面  /online-consultation
 Exchange.vue  交流页面      /disease-exchange
 Faq.vue  常见问题页面       /faq
 Personal.vue  个人中心页面  /personal-center
-PredctResult.vue  预测结果页面  /predctResult 
 
 
 
