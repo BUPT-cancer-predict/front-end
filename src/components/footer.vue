@@ -1,12 +1,12 @@
 <template>
   <div id="page-footer">
     <div class="links">
-      <router-link to="/about" class="link-item">关于我们</router-link>
-      <router-link to="/research" class="link-item">研究进展</router-link>
-      <router-link to="/contact" class="link-item">联系我们</router-link>
-      <router-link to="/instructions" class="link-item">使用说明</router-link>
-      <router-link to="/privacy" class="link-item">隐私政策</router-link>
-      <router-link to="/feedback" class="link-item">用户反馈</router-link>
+      <router-link to="/#" class="link-item">关于我们</router-link>
+      <router-link to="/#" class="link-item">研究进展</router-link>
+      <router-link to="/#" class="link-item">联系我们</router-link>
+      <router-link to="/#" class="link-item">使用说明</router-link>
+      <router-link to="/#" class="link-item">隐私政策</router-link>
+      <router-link to="/#" class="link-item">用户反馈</router-link>
     </div>
 
     <footer>
