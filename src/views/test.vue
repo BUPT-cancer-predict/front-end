@@ -35,1092 +35,900 @@
       </nav>
     </header>
   </div>
-  <div class="patient-form" v-if="!showResult">
-    <div class="overlay">
-      <h3>请填写您的信息</h3>
-    </div>
-    <div class="form-container">
-      <el-form
-        :model="patientForm"
-        :rules="rules"
-        ref="patientFormRef"
-        label-width="160px"
-      >
-        <el-form-item prop="ageAtDiagnosis" class="center-form-item">
-          <template #label>
-            <el-tooltip
-              content="请输入患者的确诊年龄，这会影响我们对您的病情的进一步判断"
-              placement="top"
-            >
-              <span>确诊年龄</span>
-            </el-tooltip>
-          </template>
-          <el-input
-            v-model.number="patientForm.ageAtDiagnosis"
-            type="number"
-            :min="0"
-            class="center-input"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item prop="familyHistory" class="center-form-item">
-          <template #label>
-            <el-tooltip
-              content="请输入患者的恶性肿瘤家族史，这会影响我们对您的病情的进一步判断"
-              placement="top"
-            >
-              <span>恶性肿瘤家族史</span>
-            </el-tooltip>
-          </template>
-          <el-radio-group
-            v-model="patientForm.familyHistory"
-            class="center-content"
-          >
-            <el-radio :label="1">有</el-radio>
-            <el-radio :label="0">无</el-radio>
-          </el-radio-group>
-        </el-form-item>
-
-        <el-form-item prop="bmi" class="center-form-item">
-          <template #label>
-            <el-tooltip
-              content="请输入患者的BMI，这会影响我们对您的病情的进一步判断"
-              placement="top"
-            >
-              <span>BMI</span>
-            </el-tooltip>
-          </template>
-          <el-input
-            v-model.number="patientForm.bmi"
-            type="number"
-            :min="0"
-            class="center-input"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item prop="pregnancies" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的孕史" placement="top">
-              <span>孕史</span>
-            </el-tooltip>
-          </template>
-          <el-input
-            v-model.number="patientForm.pregnancies"
-            type="number"
-            :min="0"
-            class="center-input"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item prop="deliveries" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的产史" placement="top">
-              <span>产史</span>
-            </el-tooltip>
-          </template>
-          <el-input
-            v-model.number="patientForm.deliveries"
-            type="number"
-            :min="0"
-            class="center-input"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item prop="ca125" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的CA125" placement="top">
-              <span>CA125</span>
-            </el-tooltip>
-          </template>
-          <el-radio-group v-model="patientForm.ca125" class="center-content">
-            <el-radio :label="1">大于35</el-radio>
-            <el-radio :label="0">小于等于35</el-radio>
-          </el-radio-group>
-        </el-form-item>
-
-        <el-form-item prop="ca199" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的CA199" placement="top">
-              <span>CA199</span>
-            </el-tooltip>
-          </template>
-          <el-radio-group v-model="patientForm.ca199" class="center-content">
-            <el-radio :label="1">大于40</el-radio>
-            <el-radio :label="0">小于等于40</el-radio>
-          </el-radio-group>
-        </el-form-item>
-
-        <el-form-item prop="pathologyType" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的病理类型" placement="top">
-              <span>病理类型</span>
-            </el-tooltip>
-          </template>
-          <el-select
-            v-model="patientForm.pathologyType"
-            placeholder="请选择病理类型"
-            class="center-input"
-          >
-            <el-option
-              v-for="item in pathologyTypes"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item prop="microPapillary" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的微乳头数值" placement="top">
-              <span>微乳头</span>
-            </el-tooltip>
-          </template>
-          <el-radio-group
-            v-model="patientForm.microPapillary"
-            class="center-content"
-          >
-            <el-radio :label="1">有</el-radio>
-            <el-radio :label="0">无</el-radio>
-          </el-radio-group>
-        </el-form-item>
-
-        <el-form-item prop="highRiskPathology" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的高危病理特征" placement="top">
-              <span>高危病理特征</span>
-            </el-tooltip>
-          </template>
-          <el-input
-            v-model="patientForm.highRiskPathology"
-            placeholder="用逗号分割"
-            class="center-input"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item prop="cystRupture" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者术中是否见囊肿破裂" placement="top">
-              <span>术中是否见囊肿破裂</span>
-            </el-tooltip>
-          </template>
-          <el-radio-group
-            v-model="patientForm.cystRupture"
-            class="center-content"
-          >
-            <el-radio :label="1">是</el-radio>
-            <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-
-        <el-form-item prop="stage" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的分期情况" placement="top">
-              <span>分期</span>
-            </el-tooltip>
-          </template>
-          <el-select
-            v-model="patientForm.stage"
-            placeholder="请选择分期"
-            class="center-input"
-          >
-            <el-option
-              v-for="item in stages"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item prop="surgeryMethod" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的手术方式" placement="top">
-              <span>手术方式</span>
-            </el-tooltip>
-          </template>
-
-          <el-radio-group
-            v-model="patientForm.surgeryMethod"
-            class="center-content"
-          >
-            <el-radio :label="0">开腹</el-radio>
-            <el-radio :label="1">腹腔镜</el-radio>
-          </el-radio-group>
-        </el-form-item>
-
-        <el-form-item prop="surgeryScope" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的手术范围" placement="top">
-              <span>手术范围</span>
-            </el-tooltip>
-          </template>
-          <el-input
-            v-model="patientForm.surgeryScope"
-            placeholder="用逗号分割"
-            class="center-input"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item prop="bilateralBorderline" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的双侧交界" placement="top">
-              <span>双侧交界</span>
-            </el-tooltip>
-          </template>
-          <el-radio-group
-            v-model="patientForm.bilateralBorderline"
-            class="center-content"
-          >
-            <el-radio :label="1">单侧</el-radio>
-            <el-radio :label="2">双侧</el-radio>
-          </el-radio-group>
-        </el-form-item>
-
-        <el-form-item prop="maxDiameter" class="center-form-item">
-          <template #label>
-            <el-tooltip content="请输入患者的最大径大小" placement="top">
-              <span>最大径大小</span>
-            </el-tooltip>
-          </template>
-          <el-input
-            v-model.number="patientForm.maxDiameter"
-            type="number"
-            :min="0"
-            class="center-input"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-    </div>
-  </div>
-  <div class="button-group">
-    <el-button
-      type="primary"
-      :disabled="isSubmitButtonDisabled"
-      @click="submitForm(patientFormRef)"
-    >
-      提交 ({{ Math.round(fillPercentage) }}%)
-    </el-button>
-    <el-button @click="resetForm(patientFormRef)">重置</el-button>
-  </div>
-
-  <div class="result" v-if="showResult">
-    <div class="result-header">
-      <div class="title-container">
-        <div class="title">预测结果</div>
+  <div class="container">
+    <div class="sidebar">
+      <div class="person">
+        <h3>个人中心</h3>
+        <div class="user-info">
+          <img
+            :src="require('@/assets/user.jpeg')"
+            alt="用户头像"
+            class="avatar"
+          />
+          <p class="phone">手机号: {{ user.phone }}</p>
+          <p class="usage">使用次数: {{ user.usageCount }}</p>
+          <p class="registration">注册日期: {{ user.registrationDate }}</p>
+        </div>
+      </div>
+      <div class="others">
+        <h3>快捷跳转</h3>
+        <ul class="quick-links">
+          <li>
+            <router-link to="/predict" class="link-item">AI 预测</router-link>
+          </li>
+          <li>
+            <router-link to="/ai" class="link-item">AI 对话</router-link>
+          </li>
+          <li>
+            <router-link to="/" class="link-item">退出系统</router-link>
+          </li>
+        </ul>
       </div>
     </div>
-    <div class="result-form">
-      <el-table
-        :data="tableData"
-        border
-        style="width: 100%"
-        header-cell-style="background-color: #666; color: #fff;"
-      >
-        <el-table-column prop="label" label="项目" width="200" align="center">
-        </el-table-column>
-        <el-table-column prop="value" label="值" align="center">
-          <template #default="{ row }">
-            <div v-if="row.key === 'recurrenceProbability'">
-              {{ row.value }}%
-            </div>
-            <div v-else-if="row.key === 'riskLevel'">
-              <el-tag
-                :type="riskLevelType"
-                effect="dark"
-                size="large"
-                class="custom-tag"
-              >
-                {{ row.value }}
+    <div class="content">
+      <div class="timer">
+        <el-date-picker
+          v-model="startTime"
+          type="datetime"
+          placeholder="选择开始时间"
+          style="width: 300px; margin-right: 10px"
+        ></el-date-picker>
+        <el-date-picker
+          v-model="endTime"
+          type="datetime"
+          placeholder="选择结束时间"
+          style="width: 300px"
+        ></el-date-picker>
+        <el-button type="primary" @click="searchReports" style="width: 200px"
+          >查询</el-button
+        >
+      </div>
+
+      <div class="report-list">
+        <el-table
+          ref="tableRef"
+          :data="reports"
+          style="width: 100%"
+          max-height="420"
+          height="420"
+          @selection-change="handleSelectionChange"
+        >
+          <!-- :data="filteredReports" -->
+          <el-table-column
+            type="selection"
+            width="55"
+            align="center"
+          ></el-table-column>
+          <el-table-column prop="date" label="日期" width="150" align="center">
+            <template #default="{ row }">
+              <span>{{ row.date }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="recurrenceProbability"
+            label="复发概率"
+            align="center"
+          >
+            <template #default="{ row }">
+              <span>{{ row.recurrenceProbability }}%</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="riskLevel" label="风险等级" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getRiskLevelColor(row.riskLevel)">
+                {{ row.riskLevel }}
               </el-tag>
-            </div>
-            <div v-else-if="row.key === 'suggestions'">
-              <el-tag
-                type="success"
-                effect="dark"
-                size="large"
-                class="custom-tag"
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="suggestions"
+            label="建议"
+            width="250"
+            align="center"
+          >
+            <template #default="{ row }">
+              <span>{{ row.suggestions }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ageAtDiagnosis" label="年龄" align="center">
+            <template #default="{ row }">
+              <span>{{ row.ageAtDiagnosis }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="familyHistory" label="家族史" align="center">
+            <template #default="{ row }">
+              <span>{{ row.familyHistory ? "有" : "无" }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="bmi" label="BMI" align="center">
+            <template #default="{ row }">
+              <span>{{ row.bmi }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="pregnancies" label="妊娠次数" align="center">
+            <template #default="{ row }">
+              <span>{{ row.pregnancies }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="deliveries" label="分娩次数" align="center">
+            <template #default="{ row }">
+              <span>{{ row.deliveries }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ca125" label="CA125" align="center">
+            <template #default="{ row }">
+              <span>{{ row.ca125 }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ca199" label="CA199" align="center">
+            <template #default="{ row }">
+              <span>{{ row.ca199 }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="pathologyType"
+            label="病理类型"
+            width="150"
+            align="center"
+          >
+            <template #default="{ row }">
+              <span>{{ row.pathologyType }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="microPapillary"
+            label="微乳头状"
+            width="150"
+            align="center"
+          >
+            <template #default="{ row }">
+              <span>{{ row.microPapillary ? "有" : "无" }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="highRiskPathology"
+            width="150"
+            label="高风险病理"
+            align="center"
+          >
+            <template #default="{ row }">
+              <span>{{ row.highRiskPathology }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="cystRupture" label="囊肿破裂" align="center">
+            <template #default="{ row }">
+              <span>{{ row.cystRupture ? "有" : "无" }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="stage" label="分期" align="center">
+            <template #default="{ row }">
+              <span>{{ row.stage }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="surgeryMethod"
+            label="手术方法"
+            width="150"
+            align="center"
+          >
+            <template #default="{ row }">
+              <span>{{ row.surgeryMethod }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="surgeryScope"
+            label="手术范围"
+            width="150"
+            align="center"
+          >
+            <template #default="{ row }">
+              <span>{{ row.surgeryScope }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="bilateralBorderline"
+            label="双侧交界性"
+            align="center"
+          >
+            <template #default="{ row }">
+              <span>{{ row.bilateralBorderline }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="maxDiameter" label="最大直径" align="center">
+            <template #default="{ row }">
+              <span>{{ row.maxDiameter }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed="right"
+            label="操作"
+            min-width="150"
+            align="center"
+          >
+            <template #default="{ row }">
+              <el-button
+                link
+                type="primary"
+                size="small"
+                @click="showDetails(row)"
               >
-                {{ row.value }}
-              </el-tag>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <div>
-      <div class="download">
-        <el-button @click="generateWordDocument">下载完整预测报告</el-button>
-        <el-button @click="goBackAndReset">返回填写表单</el-button>
+                详情
+              </el-button>
+              <el-button
+                link
+                type="primary"
+                size="small"
+                @click="generateAndDownloadDocx(row)"
+              >
+                下载
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <div class="button-container" style="margin-top: 20px">
+        <el-button
+          type="primary"
+          size="large"
+          @click="generateAndDownloadMultipleReports"
+        >
+          多选导出
+        </el-button>
       </div>
     </div>
   </div>
+
+  <el-dialog v-model="dialogVisible" width="70%" :before-close="handleClose">
+    <template #title>
+      <div class="dialog-title" style="align-items: center; text-align: center">
+        报告详情
+      </div>
+    </template>
+    <div class="details-container">
+      <div class="report-summary">
+        <h4>报告摘要</h4>
+        <el-table :data="[currentReport]" style="width: 100%">
+          <el-table-column prop="date" label="日期" width="150" align="center">
+            <template #default="{ row }">
+              <span>{{ row.date }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="recurrenceProbability"
+            label="复发概率"
+            align="center"
+          >
+            <template #default="{ row }">
+              <span>{{ row.recurrenceProbability }}%</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="riskLevel" label="风险等级" align="center">
+            <template #default="{ row }">
+              <el-tag :type="getRiskLevelColor(row.riskLevel)">
+                {{ row.riskLevel }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="suggestions"
+            label="建议"
+            width="250"
+            align="center"
+          >
+            <template #default="{ row }">
+              <span>{{ row.suggestions }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <div class="prediction-details">
+        <h4>预测数据</h4>
+        <div class="prediction-tables">
+          <div class="table-row">
+            <el-table :data="[currentReport]" style="width: 100%">
+              <el-table-column
+                prop="ageAtDiagnosis"
+                label="年龄"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.ageAtDiagnosis }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="familyHistory"
+                label="家族史"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.familyHistory ? "有" : "无" }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="bmi" label="BMI" align="center">
+                <template #default="{ row }">
+                  <span>{{ row.bmi }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="pregnancies"
+                label="妊娠次数"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.pregnancies }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="deliveries"
+                label="分娩次数"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.deliveries }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="ca125" label="CA125" align="center">
+                <template #default="{ row }">
+                  <span>{{ row.ca125 }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="ca199" label="CA199" align="center">
+                <template #default="{ row }">
+                  <span>{{ row.ca199 }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="pathologyType"
+                label="病理类型"
+                width="150"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.pathologyType }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <div class="table-row">
+            <el-table :data="[currentReport]" style="width: 100%">
+              <el-table-column
+                prop="microPapillary"
+                label="微乳头状"
+                width="150"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.microPapillary ? "有" : "无" }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="highRiskPathology"
+                width="150"
+                label="高风险病理"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.highRiskPathology }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="cystRupture"
+                label="囊肿破裂"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.cystRupture ? "有" : "无" }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="stage" label="分期" align="center">
+                <template #default="{ row }">
+                  <span>{{ row.stage }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="surgeryMethod"
+                label="手术方法"
+                width="150"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.surgeryMethod }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="surgeryScope"
+                label="手术范围"
+                width="150"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.surgeryScope }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="bilateralBorderline"
+                label="双侧交界性"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.bilateralBorderline }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="maxDiameter"
+                label="最大直径"
+                align="center"
+              >
+                <template #default="{ row }">
+                  <span>{{ row.maxDiameter }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </el-dialog>
   <pagefooter></pagefooter>
 </template>
   
   
-  <script>
+<script>
 import axios from "axios";
-import { ref, reactive, computed } from "vue";
-import {
-  Document,
-  Packer,
-  Paragraph,
-  TextRun,
-  Table,
-  TableRow,
-  TableCell,
-  WidthType,
-} from "docx";
-import "jspdf-autotable";
+import { Document, Packer, Paragraph, TextRun } from "docx";
 import { saveAs } from "file-saver";
 
-import {
-  ElMessage,
-  ElForm,
-  ElFormItem,
-  ElInput,
-  ElRadioGroup,
-  ElRadio,
-  ElSelect,
-  ElOption,
-  ElInputNumber,
-  ElLoading,
-  ElProgress,
-  ElButton,
-  ElTable,
-  ElTableColumn,
-  ElTag,
-} from "element-plus";
-
 export default {
-  conponents: {
-    ElForm,
-    ElFormItem,
-    ElInput,
-    ElRadioGroup,
-    ElRadio,
-    ElSelect,
-    ElOption,
-    ElInputNumber,
-    ElLoading,
-    ElProgress,
-    ElButton,
-    ElTable,
-    ElTableColumn,
-    ElTag,
+  data() {
+    return {
+      dialogVisible: false,
+      currentReport: null,
+      selectedReports: null,
+      startTime: null,
+      endTime: null,
+      filteredReports: [],
+
+      user: {
+        phone: "1234567890",
+        usageCount: 10,
+        registrationDate: "2023-05-01",
+      },
+      reports: [
+        {
+          date: "2023-05-01",
+          recurrenceProbability: 50,
+          riskLevel: "高风险",
+          suggestions: "建议1",
+          ageAtDiagnosis: 45,
+          familyHistory: true,
+          bmi: 27.5,
+          pregnancies: 2,
+          deliveries: 1,
+          ca125: 1,
+          ca199: 0,
+          pathologyType: "腺癌",
+          microPapillary: false,
+          highRiskPathology: "高风险",
+          cystRupture: true,
+          stage: "IIA",
+          surgeryMethod: 1,
+          surgeryScope: "广泛子宫切除术",
+          bilateralBorderline: 0,
+          maxDiameter: 5.2,
+        },
+        {
+          date: "2023-05-02",
+          recurrenceProbability: 30,
+          riskLevel: "中风险",
+          suggestions: "建议2",
+          ageAtDiagnosis: 45,
+          familyHistory: true,
+          bmi: 27.5,
+          pregnancies: 2,
+          deliveries: 1,
+          ca125: 1,
+          ca199: 0,
+          pathologyType: "腺癌",
+          microPapillary: false,
+          highRiskPathology: "高风险",
+          cystRupture: true,
+          stage: "IIA",
+          surgeryMethod: 1,
+          surgeryScope: "广泛子宫切除术",
+          bilateralBorderline: 0,
+          maxDiameter: 5.2,
+        },
+        {
+          date: "2023-05-02",
+          recurrenceProbability: 30,
+          riskLevel: "中风险",
+          suggestions: "建议2",
+          ageAtDiagnosis: 45,
+          familyHistory: true,
+          bmi: 27.5,
+          pregnancies: 2,
+          deliveries: 1,
+          ca125: 1,
+          ca199: 0,
+          pathologyType: "腺癌",
+          microPapillary: false,
+          highRiskPathology: "高风险",
+          cystRupture: true,
+          stage: "IIA",
+          surgeryMethod: 1,
+          surgeryScope: "广泛子宫切除术",
+          bilateralBorderline: 0,
+          maxDiameter: 5.2,
+        },
+        {
+          date: "2023-05-02",
+          recurrenceProbability: 30,
+          riskLevel: "中风险",
+          suggestions: "建议2",
+          ageAtDiagnosis: 45,
+          familyHistory: true,
+          bmi: 27.5,
+          pregnancies: 2,
+          deliveries: 1,
+          ca125: 1,
+          ca199: 0,
+          pathologyType: "腺癌",
+          microPapillary: false,
+          highRiskPathology: "高风险",
+          cystRupture: true,
+          stage: "IIA",
+          surgeryMethod: 1,
+          surgeryScope: "广泛子宫切除术",
+          bilateralBorderline: 0,
+          maxDiameter: 5.2,
+        },
+        {
+          date: "2023-05-02",
+          recurrenceProbability: 30,
+          riskLevel: "中风险",
+          suggestions: "建议2",
+          ageAtDiagnosis: 45,
+          familyHistory: true,
+          bmi: 27.5,
+          pregnancies: 2,
+          deliveries: 1,
+          ca125: 1,
+          ca199: 0,
+          pathologyType: "腺癌",
+          microPapillary: false,
+          highRiskPathology: "高风险",
+          cystRupture: true,
+          stage: "IIA",
+          surgeryMethod: 1,
+          surgeryScope: "广泛子宫切除术",
+          bilateralBorderline: 0,
+          maxDiameter: 5.2,
+        },
+        {
+          date: "2023-05-02",
+          recurrenceProbability: 30,
+          riskLevel: "中风险",
+          suggestions: "建议2",
+          ageAtDiagnosis: 45,
+          familyHistory: true,
+          bmi: 27.5,
+          pregnancies: 2,
+          deliveries: 1,
+          ca125: 1,
+          ca199: 0,
+          pathologyType: "腺癌",
+          microPapillary: false,
+          highRiskPathology: "高风险",
+          cystRupture: true,
+          stage: "IIA",
+          surgeryMethod: 1,
+          surgeryScope: "广泛子宫切除术",
+          bilateralBorderline: 0,
+          maxDiameter: 5.2,
+        },
+        {
+          date: "2023-05-02",
+          recurrenceProbability: 30,
+          riskLevel: "中风险",
+          suggestions: "建议2",
+          ageAtDiagnosis: 45,
+          familyHistory: true,
+          bmi: 27.5,
+          pregnancies: 2,
+          deliveries: 1,
+          ca125: 1,
+          ca199: 0,
+          pathologyType: "腺癌",
+          microPapillary: false,
+          highRiskPathology: "高风险",
+          cystRupture: true,
+          stage: "IIA",
+          surgeryMethod: 1,
+          surgeryScope: "广泛子宫切除术",
+          bilateralBorderline: 0,
+          maxDiameter: 5.2,
+        },
+        {
+          date: "2023-05-02",
+          recurrenceProbability: 30,
+          riskLevel: "中风险",
+          suggestions: "建议2",
+          ageAtDiagnosis: 45,
+          familyHistory: true,
+          bmi: 27.5,
+          pregnancies: 2,
+          deliveries: 1,
+          ca125: 1,
+          ca199: 0,
+          pathologyType: "腺癌",
+          microPapillary: false,
+          highRiskPathology: "高风险",
+          cystRupture: true,
+          stage: "IIA",
+          surgeryMethod: 1,
+          surgeryScope: "广泛子宫切除术",
+          bilateralBorderline: 0,
+          maxDiameter: 5.2,
+        },
+      ],
+    };
   },
+  // async created() {
+  //   try {
+  //     const userInfoResponse = await axios.get("/api/user-info");
+  //     this.user = userInfoResponse.data;
 
-  setup() {
-    const patientFormRef = ref(null);
-    const patientForm = reactive({
-      ageAtDiagnosis: null,
-      familyHistory: null,
-      bmi: null,
-      pregnancies: null,
-      deliveries: null,
-      ca125: null,
-      ca199: null,
-      pathologyType: null,
-      microPapillary: null,
-      highRiskPathology: "",
-      cystRupture: null,
-      stage: null,
-      surgeryMethod: null,
-      surgeryScope: "",
-      bilateralBorderline: null,
-      maxDiameter: null,
-    });
-
-    //假数据
-    const fakeData = {
-      recurrenceProbability: 20,
-      riskLevel: "中风险",
-      suggestions: "定期复查，注意休息",
-    };
-
-    const rules = {
-      ageAtDiagnosis: [
-        { required: true, message: "请输入确诊年龄", trigger: "blur" },
-      ],
-      familyHistory: [
-        { required: true, message: "请选择恶性肿瘤家族史", trigger: "change" },
-      ],
-      bmi: [{ required: true, message: "请输入BMI", trigger: "blur" }],
-      pregnancies: [{ required: true, message: "请输入孕史", trigger: "blur" }],
-      deliveries: [{ required: true, message: "请输入产史", trigger: "blur" }],
-      ca125: [{ required: true, message: "请选择CA125", trigger: "change" }],
-      ca199: [{ required: true, message: "请选择CA199", trigger: "change" }],
-      pathologyType: [
-        { required: true, message: "请选择病理类型", trigger: "change" },
-      ],
-      microPapillary: [
-        { required: true, message: "请选择微乳头", trigger: "change" },
-      ],
-      highRiskPathology: [
-        { required: true, message: "请输入高危病理特征", trigger: "change" },
-      ],
-      cystRupture: [
-        {
-          required: true,
-          message: "请选择术中是否见囊肿破裂",
-          trigger: "change",
-        },
-      ],
-      stage: [{ required: true, message: "请选择分期", trigger: "change" }],
-      surgeryMethod: [
-        { required: true, message: "请选择手术方式", trigger: "change" },
-      ],
-      surgeryScope: [
-        { required: true, message: "请输入手术范围", trigger: "blur" },
-      ],
-      bilateralBorderline: [
-        { required: true, message: "请选择双侧交界", trigger: "change" },
-      ],
-      maxDiameter: [
-        { required: true, message: "请输入最大径大小", trigger: "blur" },
-      ],
-    };
-
-    const pathologyTypes = [
-      { value: 1, label: "类型1" },
-      { value: 2, label: "类型2" },
-      // 根据实际情况添加更多选项
-    ];
-
-    const stages = [
-      { value: 1, label: "I期" },
-      { value: 2, label: "II期" },
-      // 根据实际情况添加更多选项
-    ];
-
-    // 计算填写进度
-    const filledFieldsCount = computed(() => {
-      return Object.values(patientForm).filter(
-        (value) => value !== null && value !== ""
-      ).length;
-    });
-
-    const totalFields = Object.keys(patientForm).length;
-
-    const fillPercentage = computed(() => {
-      return (filledFieldsCount.value / totalFields) * 100;
-    });
-
-    // 控制提交按钮状态
-    const isSubmitButtonDisabled = computed(() => {
-      return filledFieldsCount.value < totalFields;
-    });
-
-    const tableData = ref([]);
-
-    const showResult = ref(false);
-
-    const riskLevelType = ref("warning");
-
-    const submitForm = (formEl) => {
-      if (!formEl) return;
-      formEl.validate((valid) => {
-        if (valid) {
-          // 显示加载提示
-          ElMessage({ message: "正在提交数据...", type: "info" });
-
-          axios
-            .post("api/submit-predict", patientForm.value)
-            .then((response) => {
-              // 隐藏加载提示
-              ElMessage.success("提交成功！");
-              showProgress(response.data);
-              updateTableData(response.data);
-              showResult.value = true;
-            })
-            .catch((error) => {
-              // 隐藏加载提示
-              ElMessage.error("提交失败：" + error.message);
-            });
-        } else {
-          console.log("error submit!");
-          return false;
-        }
-      });
-    };
-
-    const showProgress = (data) => {
-      // 使用消息提示代替进度条
-      ElMessage({ message: "数据处理中...", type: "info" });
-
-      setTimeout(() => {
-        ElMessage.success("数据处理完成");
-      }, 3000);
-    };
-
-    const updateTableData = (data) => {
-      tableData.value = [
-        {
-          label: "复发概率",
-          key: "recurrenceProbability",
-          value: data.recurrenceProbability,
-        },
-        { label: "风险等级", key: "riskLevel", value: data.riskLevel },
-        { label: "建议", key: "suggestions", value: data.suggestions },
-      ];
-
-      if (data.riskLevel === "低风险") {
-        riskLevelType.value = "success";
-      } else if (data.riskLevel === "中风险") {
-        riskLevelType.value = "warning";
-      } else if (data.riskLevel === "高风险") {
-        riskLevelType.value = "danger";
+  //     const reportsResponse = await axios.get("/api/patient-reports");
+  //     this.reports = reportsResponse.data;
+  //     this.filteredReports = this.reports;
+  //   } catch (error) {
+  //     console.error("Error fetching user data or reports:", error);
+  //   }
+  // },
+  methods: {
+    getRiskLevelColor(level) {
+      switch (level) {
+        case "低风险":
+          return "success";
+        case "中风险":
+          return "warning";
+        case "高风险":
+          return "danger";
+        default:
+          return "";
       }
-    };
-
-    const goBackAndReset = () => {
-      showResult.value = false;
-      resetForm(patientFormRef.value);
-    };
-
-    const resetForm = (formEl) => {
-      if (!formEl) return;
-      formEl.resetFields();
-
-      //下删
-      showResult.value = !showResult.value;
-      updateTableData(fakeData);
-    };
-
-    const downloadFormat = ref(null);
-
-    const generateWordDocument = () => {
-      // 假数据
-      const patientForm = {
-        ageAtDiagnosis: 45,
-        familyHistory: true,
-        bmi: 27.5,
-        pregnancies: 2,
-        deliveries: 1,
-        ca125: 1,
-        ca199: 0,
-        pathologyType: "腺癌",
-        microPapillary: false,
-        highRiskPathology: "高风险",
-        cystRupture: true,
-        stage: "IIA",
-        surgeryMethod: 1,
-        surgeryScope: "广泛子宫切除术",
-        bilateralBorderline: 0,
-        maxDiameter: 5.2,
-      };
-
-      const tableData = {
-        value: [
-          { key: "recurrenceProbability", value: 30 },
-          { key: "riskLevel", value: "中风险" },
-          { key: "suggestions", value: "定期复查" },
-        ],
-      };
-
-      // 获取当前时间
-      const now = new Date();
-      const formattedDate = `${now.getFullYear()}年${
-        now.getMonth() + 1
-      }月${now.getDate()}日 ${now.getHours()}时${now.getMinutes()}分${now.getSeconds()}秒`;
-
+    },
+    showDetails(row) {
+      console.log("showDetails", row);
+      if (!row) {
+        console.error("No row selected.");
+        return;
+      }
+      this.currentReport = row;
+      this.dialogVisible = true;
+    },
+    handleClose(done) {
+      this.$confirm("确认关闭？")
+        .then((_) => {
+          this.dialogVisible = false;
+          done();
+        })
+        .catch((_) => {});
+    },
+    handleSelectionChange(selection) {
+      this.selectedReports = selection;
+    },
+    async generateAndDownloadDocx(row) {
+      // 创建文档实例
       const doc = new Document({
+        info: {
+          creator: "Your Name", // 明确指定 creator 属性
+        },
         sections: [
+          // 确保 sections 是一个数组
           {
             children: [
-              // 添加一级标题“预测报告”
               new Paragraph({
+                text: "报告详情",
+                alignment: "center",
                 heading: "heading_1",
-                alignment: "center",
-                children: [
-                  new TextRun({
-                    text: "预测报告",
-                    bold: true,
-                    size: 28,
-                  }),
-                ],
               }),
-
-              // 添加当前时间
               new Paragraph({
-                text: formattedDate,
-                alignment: "center",
-                size: 18,
+                text: `日期: ${row.date}`,
               }),
-
-              //增加一个空行
               new Paragraph({
-                text: " ",
+                text: `复发概率: ${row.recurrenceProbability}%`,
               }),
-
-              // 预测结果二级标题
               new Paragraph({
-                heading: "heading_2",
-                alignment: "center",
-                children: [
-                  new TextRun({
-                    text: "预测结果",
-                    bold: true,
-                    size: 22,
-                  }),
-                ],
+                text: `风险等级: ${row.riskLevel}`,
               }),
-
-              // 预测结果表格
-              new Table({
-                widths: ["40", "60"],
-                alignment: "center",
-                rows: [
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        width: { size: 40, type: WidthType.PERCENTAGE },
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "复发概率",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        width: { size: 60, type: WidthType.PERCENTAGE },
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${
-                              tableData.value.find(
-                                (item) => item.key === "recurrenceProbability"
-                              ).value
-                            }%`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "风险等级",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${
-                              tableData.value.find(
-                                (item) => item.key === "riskLevel"
-                              ).value
-                            }`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({ alignment: "center", text: "建议" }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${
-                              tableData.value.find(
-                                (item) => item.key === "suggestions"
-                              ).value
-                            }`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                ],
-              }),
-
-              //增加一个空行
               new Paragraph({
-                text: " ", // 添加一个空行
+                text: `建议: ${row.suggestions}`,
               }),
-
-              // 患者信息二级标题
               new Paragraph({
-                heading: "heading_2",
-                alignment: "center",
-                children: [
-                  new TextRun({
-                    text: "患者信息",
-                    bold: true,
-                    size: 22,
-                  }),
-                ],
+                text: `年龄: ${row.ageAtDiagnosis}`,
               }),
-
-              // 患者信息表格
-              new Table({
-                widths: ["30", "70"],
-                alignment: "center",
-                rows: [
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        width: { size: 30, type: WidthType.PERCENTAGE },
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "确诊年龄",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        width: { size: 70, type: WidthType.PERCENTAGE },
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.ageAtDiagnosis}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "恶性肿瘤家族史",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.familyHistory ? "有" : "无"}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({ alignment: "center", text: "BMI" }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.bmi}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({ alignment: "center", text: "孕史" }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.pregnancies}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({ alignment: "center", text: "产史" }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.deliveries}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({ alignment: "center", text: "CA125" }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${
-                              patientForm.ca125 === 1 ? "大于35" : "小于等于35"
-                            }`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({ alignment: "center", text: "CA199" }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${
-                              patientForm.ca199 === 1 ? "大于40" : "小于等于40"
-                            }`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "病理类型",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.pathologyType}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "微乳头",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.microPapillary ? "有" : "无"}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "高危病理特征",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.highRiskPathology}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "术中是否见囊肿破裂",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.cystRupture ? "是" : "否"}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "分期",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.stage}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "手术方式",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${
-                              patientForm.surgeryMethod === 0
-                                ? "开腹"
-                                : "腹腔镜"
-                            }`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "手术范围",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.surgeryScope}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "双侧交界",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${
-                              patientForm.bilateralBorderline === 1
-                                ? "单侧"
-                                : "双侧"
-                            }`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: "最大径大小",
-                          }),
-                        ],
-                      }),
-                      new TableCell({
-                        children: [
-                          new Paragraph({
-                            alignment: "center",
-                            text: `${patientForm.maxDiameter}`,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                ],
+              new Paragraph({
+                text: `家族史: ${row.familyHistory ? "有" : "无"}`,
+              }),
+              new Paragraph({
+                text: `BMI: ${row.bmi}`,
+              }),
+              new Paragraph({
+                text: `妊娠次数: ${row.pregnancies}`,
+              }),
+              new Paragraph({
+                text: `分娩次数: ${row.deliveries}`,
+              }),
+              new Paragraph({
+                text: `CA125: ${row.ca125}`,
+              }),
+              new Paragraph({
+                text: `CA199: ${row.ca199}`,
+              }),
+              new Paragraph({
+                text: `病理类型: ${row.pathologyType}`,
+              }),
+              new Paragraph({
+                text: `微乳头状: ${row.microPapillary ? "有" : "无"}`,
+              }),
+              new Paragraph({
+                text: `高风险病理: ${row.highRiskPathology}`,
+              }),
+              new Paragraph({
+                text: `囊肿破裂: ${row.cystRupture ? "有" : "无"}`,
+              }),
+              new Paragraph({
+                text: `分期: ${row.stage}`,
+              }),
+              new Paragraph({
+                text: `手术方法: ${row.surgeryMethod}`,
+              }),
+              new Paragraph({
+                text: `手术范围: ${row.surgeryScope}`,
+              }),
+              new Paragraph({
+                text: `双侧交界性: ${row.bilateralBorderline}`,
+              }),
+              new Paragraph({
+                text: `最大直径: ${row.maxDiameter}`,
               }),
             ],
           },
         ],
       });
 
+      // 将文档转换为 Blob 并下载
       Packer.toBlob(doc).then((blob) => {
-        saveAs(blob, "预测报告.docx");
+        saveAs(blob, `report_${row.date}.docx`);
       });
-    };
+    },
+    generateAndDownloadMultipleReports() {
+      const selectedData = this.selectedReports || [];
 
-    return {
-      patientForm,
-      rules,
-      pathologyTypes,
-      stages,
-      patientFormRef,
-      submitForm,
-      resetForm,
-      fillPercentage,
-      isSubmitButtonDisabled,
-      showResult,
-      riskLevelType,
-      tableData,
-      updateTableData,
-      showResult,
-      goBackAndReset,
-      downloadFormat,
-      generateWordDocument,
-      //假数据测试
-      fakeData,
-    };
+      if (selectedData.length === 0) {
+        alert("请选择至少一个报告进行导出！");
+        return;
+      }
+
+      const doc = new Document({
+        info: {
+          creator: "Your Name",
+        },
+        sections: [
+          {
+            children: [
+              new Paragraph({
+                text: "多选导出报告",
+                alignment: "center",
+                heading: "heading_1",
+              }),
+            ],
+          },
+        ],
+      });
+
+      selectedData.forEach((report) => {
+        doc.addSection({
+          children: [
+            new Paragraph({
+              text: `报告日期: ${report.date}`,
+            }),
+            new Paragraph({
+              text: `报告内容: ${report.content}`,
+            }),
+            // 可以添加更多字段
+            new Paragraph({
+              text: `复发概率: ${report.recurrenceProbability}%`,
+            }),
+            new Paragraph({
+              text: `风险等级: ${report.riskLevel}`,
+            }),
+            new Paragraph({
+              text: `建议: ${report.suggestions}`,
+            }),
+            new Paragraph({
+              text: `年龄: ${report.ageAtDiagnosis}`,
+            }),
+            new Paragraph({
+              text: `家族史: ${report.familyHistory ? "有" : "无"}`,
+            }),
+            new Paragraph({
+              text: `BMI: ${report.bmi}`,
+            }),
+            new Paragraph({
+              text: `妊娠次数: ${report.pregnancies}`,
+            }),
+            new Paragraph({
+              text: `分娩次数: ${report.deliveries}`,
+            }),
+            new Paragraph({
+              text: `CA125: ${report.ca125}`,
+            }),
+            new Paragraph({
+              text: `CA199: ${report.ca199}`,
+            }),
+            new Paragraph({
+              text: `病理类型: ${report.pathologyType}`,
+            }),
+            new Paragraph({
+              text: `微乳头状: ${report.microPapillary ? "有" : "无"}`,
+            }),
+            new Paragraph({
+              text: `高风险病理: ${report.highRiskPathology}`,
+            }),
+            new Paragraph({
+              text: `囊肿破裂: ${report.cystRupture ? "有" : "无"}`,
+            }),
+            new Paragraph({
+              text: `分期: ${report.stage}`,
+            }),
+            new Paragraph({
+              text: `手术方法: ${report.surgeryMethod}`,
+            }),
+            new Paragraph({
+              text: `手术范围: ${report.surgeryScope}`,
+            }),
+            new Paragraph({
+              text: `双侧交界性: ${report.bilateralBorderline}`,
+            }),
+            new Paragraph({
+              text: `最大直径: ${report.maxDiameter}`,
+            }),
+          ],
+        });
+      });
+
+      // 将文档转换为 Blob 并下载
+      Packer.toBlob(doc).then((blob) => {
+        saveAs(
+          blob,
+          `multiple_reports_${new Date().toISOString().slice(0, 10)}.docx`
+        );
+      });
+    },
+
+    searchReports() {
+      if (!this.startTime || !this.endTime) {
+        alert("请选择开始时间和结束时间！");
+        return;
+      }
+
+      if (this.startTime > this.endTime) {
+        alert("开始时间不能大于结束时间！");
+        return;
+      }
+
+      this.filteredReports = this.reports.filter((report) => {
+        const reportDate = new Date(report.date);
+        const start = new Date(this.startTime);
+        const end = new Date(this.endTime);
+
+        return reportDate >= start && reportDate <= end;
+      });
+    },
   },
 };
 </script>
@@ -1187,140 +995,128 @@ nav a {
   color: #fff;
 }
 
-.patient-form {
-  position: absolute;
-  top: 52%;
-  left: 50%;
-  width: 50%;
-  transform: translate(-50%, -50%);
+.container {
+  display: flex;
   z-index: 2;
-  background-color: rgba(255, 255, 255, 0.8);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.overlay {
-  text-align: center;
-}
-
-.form-container {
-  height: 500px; /* 设置固定高度 */
-  width: 700px;
-  overflow-y: auto; /* 加入手动滚动条 */
-}
-.center-form-item {
-  display: flex;
-  justify-content: center; /* 水平居中 */
-  align-items: center;
-}
-.center-content {
-  display: flex;
-  justify-content: center;
-}
-.center-input .el-input__inner {
-  text-align: center;
-}
-
-.el-input,
-.el-radio-group {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 90%;
-}
-.el-select {
-  width: 90%;
-  text-align: center;
-}
-
-.el-select__popper {
-  width: 48%;
-  max-width: 48%;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-21%);
-}
-
-.el-select-dropdown .el-scrollbar__wrap .el-select-dropdown__item {
-  text-align: center;
-}
-
-.button-group {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-  position: absolute;
-  bottom: 10px; /* 距离底部的距离 */
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.result {
-  position: absolute;
-  top: 30%; /* 调整顶部位置 */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3; /* 确保在表单之上 */
-  width: 50%;
-  background-color: rgba(255, 255, 255, 0.8);
+  height: 80%;
+  background-color: rgba(255, 255, 255, 0.5);
   border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.result-form {
-  margin-left: 20px;
-  margin-right: 20px;
-  padding-top: 5px;
-  padding-bottom: 10px;
-  width: 90%;
-}
-
-.el-table {
-  width: 90%;
-  font-size: 14px;
-}
-
-.el-table th,
-.el-table td {
-  white-space: nowrap;
-}
-
-.el-table-column {
-  width: auto;
-}
-
-.result-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 20px;
 }
 
-.title-container {
-  display: flex;
-  justify-content: center;
-  flex: 1;
+.sidebar {
+  flex: 0 0 20%;
+  padding: 10px;
+  margin: 10px;
 }
 
-.title {
-  font-size: 20px;
-  font-weight: bold;
+.person {
+  height: 55%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px; /* 增加间距 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  align-items: center;
+  text-align: center;
+}
+
+.others {
+  margin-top: 20px;
+  height: 28%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  align-items: center;
+  text-align: center;
+}
+
+.quick-links {
+  list-style: none;
+  padding: 0;
   margin: 0;
 }
 
-.custom-tag {
-  font-size: 14px; /* 字体大小 */
-  border-radius: 8px; /* 边框圆角 */
-  color: #333; /* 文字颜色 */
+.quick-links li {
+  display: inline-block;
+  margin: 5px;
 }
 
-.download .el-button {
-  border-radius: 50px; /* 圆角 */
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 2px solid #ff6347;
-  color: rgb(14, 13, 13);
-  font-weight: bold;
-  width: 200px;
+.link-item {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.link-item:hover {
+  background-color: #0056b3;
+}
+
+.user-info {
+  text-align: center;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   margin-bottom: 10px;
-  margin-top: 10px;
+}
+
+.phone,
+.usage,
+.registration {
+  margin: 5px 0;
+}
+
+.content {
+  flex: 0 0 70%;
+  padding: 20px;
+  margin: 10px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  align-items: center; /* 水平居中 */
+  text-align: center; /* 文本水平居中 */
+  overflow-x: auto;
+}
+
+.timer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 5px;
+}
+
+.report-list {
+  overflow-y: auto;
+}
+
+.button-container {
+  text-align: center;
+}
+
+.prediction-tables {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* 增加两行表格之间的间距 */
+}
+
+.table-row {
+  width: 100%;
+}
+
+.el-tag {
+  margin: 5px;
 }
 </style>
